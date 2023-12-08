@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block content %}
+
+
+    <div><h1>Контакты</h1></div>
+    <br>
+    <div>
+        <table cellpadding="3">
+            <tr>
+                <td>
+                    <a href="{% url 'add_contact' user_id %}"> Добавить запись </a>
+                </td>
+            </tr>
+            <tr>
+                <td align="left" width="200">
+                {% if contacts %}
+                    {% for contact in contacts %}
+                        {% if not forloop.last %}
+                            {% if contact.name and contact.surname %}
+                                <li><a href="{% url 'show_contact' user_id contact.pk %}">{{ contact.surname }}&nbsp;{{ contact.name }}</a></li>
+                            {% elif not contact.surname %}
+                                <li><a href="{% url 'show_contact' user_id contact.pk %}">{{ contact.name }}</a></li>
+                            {% else %}
+                                <li><a href="{% url 'show_contact' user_id contact.pk %}">{{ contact.surname }}</a></li>
+                            {% endif %}
+                        {% else %}
+                            {% if contact.name and contact.surname %}
+                                <li class="last"><a href="{% url 'show_contact' user_id contact.pk %}">{{ contact.surname }}&nbsp;{{ contact.name }}</a></li>
+                            {% elif not contact.surname %}
+                                <li class="last"><a href="{% url 'show_contact' user_id contact.pk %}">{{ contact.name }}</a></li>
+                            {% else %}
+                                <li class="last"><a href="{% url 'show_contact' user_id contact.pk %}">{{ contact.surname }}</a></li>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                    <div><h1> Контакты не найдены </h1></div>
+                {% endif %}
+                </td>
+            </tr>
+        
+
+        </table>
+
+</div>
+
+{% endblock %}

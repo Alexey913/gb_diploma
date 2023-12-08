@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block content %}
+
+
+    <div><h1>{{ title }}</h1></div>
+    <br>
+    <div>
+        <table cellpadding="3">
+                
+                    <tr>
+                        <td align="left" width="200">
+                        {% if context %}
+                        <h3>Данные о документе</h3>
+                            {% for k, v in context.items %}
+                                {{ k }}: {{ v }}
+                                <br>
+                            {% endfor %}
+                        {% else %}
+                            <h2>Информация о документе {{ title }} отутствует.</h2>
+                            <h3>Желаете добавить?</h3>
+                        {% endif %}
+                        </td>
+                    </tr>
+        
+
+        </table>
+        <br>
+        <h2><a href="{% url view user_id %}"> Изменить данные </a></h2>
+        <h2>Заполнить данные из документов</h2>
+        <h2>Заполнить данные через Госуслуги</h2>
+
+</div>
+
+{% endblock %}

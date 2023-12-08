@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block content %}
+
+
+    <div><h1>Данные пользователя</h1></div>
+    <br>
+    <div>
+        <table cellpadding="3">
+                
+                    <tr>
+                        <td align="left" width="200">
+                        {% if context %}
+                            {% for k, v in context.items %}
+                                {{ k }}: {{ v }}
+                                <br>
+                            {% endfor %}
+                        {% else %}
+                            <h2>Данные о пользователе отутствуют.</h2>
+                            <h3>Желаете добавить?</h3>
+                        {% endif %}
+
+
+                        </td>
+                    </tr>
+        
+
+        </table>
+        <br>
+        <h2><a href="{% url 'change_data' user_id %}"> Изменить личные данные </a></h2>
+        <h2>Заполнить данные из документов</h2>
+        <h2>Заполнить данные через Госуслуги</h2>
+
+</div>
+
+{% endblock %}
