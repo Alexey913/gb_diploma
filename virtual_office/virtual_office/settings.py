@@ -22,28 +22,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# SECRET_KEY = 'django-insecure-7c3(r-@+3g-nsd(!cly&46w#9!t&^nv&4--_gk%gzf=vd&@*!g'
-
-import os
-
-
-SECRET_KEY = os.getenv('SECRET_KEY')
-
+SECRET_KEY = 'django-insecure-7c3(r-@+3g-nsd(!cly&46w#9!t&^nv&4--_gk%gzf=vd&@*!g'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
-
-SESSION_COOKIE_SECURE = True
-
-CSRF_COOKIE_SECURE = True
-
-STATIC_ROOT = BASE_DIR / 'static/'
+DEBUG = True
 
 ALLOWED_HOSTS = ['0.0.0.0',
                  'localhost',
                  '192.168.0.108',
-                 '192.168.0.13'
-                 'al913.pythonanywhere.com',]
+                 '192.168.0.13']
+
+# INTERNAL_IPS = ['127.0.0.1',]
 
 # Application definition
 
@@ -61,7 +50,7 @@ INSTALLED_APPS = [
     'education_app',
     'planning_app',
     'contacts_app',
-    'debug_toolbar'
+    # 'debug_toolbar',
 ]
 
 MIDDLEWARE = [
@@ -111,15 +100,8 @@ WSGI_APPLICATION = 'virtual_office.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'al913$default',
-        'USER': 'al913',
-        'PASSWORD': os.getenv('MYSQL_PASSWORD'),
-        'HOST': 'al913.mysql.pythonanywhere-services.com',
-        'OPTIONS': {
-            'init_command': "SET NAMES 'utf8mb4';SET sql_mode='STRICT_TRANS_TABLES'",
-            'charset': 'utf8mb4',
-        },
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
