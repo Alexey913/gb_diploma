@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block content %}
+
+
+    <div><h1>Данные об образовании</h1></div>
+    <br>
+    <div>
+        <table cellpadding="3">
+            {% for d in diplomas %}
+                <tr colspan="2">
+                    <td>
+                        <h3> Документ об образовании {{ forloop.counter }} </h3>
+                    </td>
+                </tr>
+                {% for k, v in d.items %}
+                <tr>
+                    <td> {{ k }}: </td>
+                    <td> {{ v }} </td>
+                </tr>
+            {% endfor %}
+        </table>
+        <br>
+        <h2><a href="{% url 'edit_diploma' user_id %}"> Изменить данные об образовании</a></h2>
+        <h2>Заполнить данные из документов</h2>
+        <h2>Заполнить данные через Госуслуги</h2>
+
+</div>
+
+{% endblock %}

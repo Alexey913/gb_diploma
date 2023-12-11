@@ -1,0 +1,25 @@
+{% extends 'planning_app/base.html' %}
+{% block content %}
+
+
+    <div><h1>{{ title }}</h1></div>
+    <div>
+        <table cellpadding="3">
+            {% for k, v in remind.items %}
+                <tr>
+                    <td align="left" width="200">
+                        {{ k }}:&nbsp;{{ v }}
+                    </td>
+                </tr>
+            {% endfor %}
+            <tr>
+                <td>
+                    <a href="{% url 'change_remind' user_id remind_id %}"> Редактировать событие </a>
+                    <a href="{% url 'del_remind' user_id remind_id %}"> Удалить событие </a>
+                </td>
+            </tr>
+        </table>
+        <br>
+</div>
+
+{% endblock %}

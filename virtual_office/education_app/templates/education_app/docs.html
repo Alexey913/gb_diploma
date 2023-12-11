@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block content %}
+
+
+    <div><h1>Данные об образовании</h1></div>
+    <br>
+    <div>
+        <table cellpadding="3">
+                
+            <tr>
+                <td align="left" width="200">
+                    {% for item in ocumentsddiplomas %}
+                        {% if not forloop.last %}
+                            <li><a href="{% url item.url_name user_id %}">{{ item.title }}</a></li>
+                        {% else %}
+                            <li class="last"><a href="{% url item.url_name user_id %}">{{ item.title }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                </td>
+            </tr>
+        
+
+        </table>
+        <br>
+        <h2>Заполнить данные из документов</h2>
+        <h2>Заполнить данные через Госуслуги</h2>
+
+</div>
+
+{% endblock %}
