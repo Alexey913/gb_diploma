@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 
 from doc_app.models import DriverCategory
-from virtual_office.common_data import DRIVER_CATEGORIES
+from abstract_app.views import DRIVER_CATEGORIES
 
 
 class Command(BaseCommand):

@@ -3,6 +3,8 @@ from django.shortcuts import redirect, HttpResponse
 from django.contrib import messages
 from django.db import models
 
+from typing import Callable
+
 
 import logging
 
@@ -14,6 +16,7 @@ GENDERS = (
     ('Мужской', 'Мужской'),
     ('Женский', 'Женский'),
 )
+
 
 DRIVER_CATEGORIES = {
     'A': 'Мотоциклы',
@@ -34,6 +37,7 @@ DRIVER_CATEGORIES = {
     'Tb': 'Троллейбусы',
 }
 
+
 MILITARY_CATEGORIES = {
     ('A', 'А - Годен'),
     ('B', 'Б - Годен с небольшими ограничениями'),
@@ -42,12 +46,14 @@ MILITARY_CATEGORIES = {
     ('E', 'Д - Не годен'),
 }
 
+
 DIPLOMA_CATEGORIES = {
     ('Диплом', 'Диплом'),
     ('Аттестат', 'Аттестат'),
     ('Свидетельство', 'Свидетельство'),
     ('Сертификат', 'Сертификат'),
 }
+
 
 TRANSPORT_CATEGORIES = {
     ('Автомобиль', 'Автомобиль'),
@@ -71,6 +77,7 @@ REALTY_CATEGORIES = {
     ('Складское помещений', 'Складское помещение'),
 }
 
+
 REPEAT_LIST = {
     ('Никогда', 'Никогда'),
     ('Каждый день', 'Каждый день'),
@@ -80,7 +87,7 @@ REPEAT_LIST = {
 }
 
 
-def redirect_with_error(request: HttpResponse):
+def redirect_with_error(request: HttpResponse) -> Exception:
     if not 'pk' in request.session:
         logger.debug(f"Попытка неавторизованного входа")
         messages.error(request, 'Для работы с офисом необходимо авторизоваться')
@@ -88,7 +95,7 @@ def redirect_with_error(request: HttpResponse):
     raise Http404
 
 
-def check_authorization(func):
+def check_authorization(func: Callable) -> Callable:
     def wrapper(request: HttpResponse, user_id: int, *args, **kwargs):
         if 'pk' in request.session and request.session['pk'] == user_id:
             return func(request, user_id, *args, **kwargs)
@@ -96,38 +103,31 @@ def check_authorization(func):
     return wrapper
 
 
-def check_doc(user_id: int, cls: models.Model):
-    if cls.objects.filter(user_id=user_id).first():
-        return True
-    return False
+def check_doc(entity: models.Model, redirect_func: str) -> Callable:
+    def deco(func: Callable) -> Callable:
+        def wrapper(request, user_id: int, *args, **kwargs) -> HttpResponse:
+            if entity.objects.filter(user_id=user_id).first():
+                return func(request, user_id, *args, **kwargs)
+            logger.debug(
+                f"Документа пользователя {user_id} не существует, redirect to {redirect_func}")
+            messages.error(
+                request, 'Для работы с документом необходимо ввести его данные')
+            return redirect(redirect_func, user_id=user_id)
+        return wrapper
+    return deco
 
-# def check_doc(func):
-#     def wrapper(request: HttpResponse, user_id: int, cls: models.Model, *args, **kwargs):
-#         if cls.objects.filter(user_id=user_id).first():
-#             return func(request, user_id, *args, **kwargs)
-#     return wrapper
 
-
-def pageNotFound(request, exception):
+def pageNotFound(request: HttpResponse, exception: Exception) -> HttpResponseNotFound:
     return HttpResponseNotFound('<h1>Страница не найдена</h1>')
 
 
-# def check_athorization(request: HttpResponse, user_id: int):
-#     if 'pk' in request.session and request.session['pk'] == user_id:
-#         return
-#     if 'pk' in request.session and request.session['pk'] != user_id:
-#         raise Http404
-#     else:
-#         return redirect_to_auth(request)
-
-
-def get_data_with_verbose_name(the_object:object, dict_data: dict):
+def get_data_with_verbose_name(the_object:object, dict_data: dict) -> dict:
     output = {}
     for name_field, value in dict_data.items():
         if value != None:
             output[the_object._meta.get_field(name_field).verbose_name] = dict_data[name_field]
     return output
-    # return {(the_object._meta.get_field(name_field).verbose_name): dict_data[name_field] for name_field, value in dict_data.items if value != None}
+
 
 menu = [{'title': 'Личные данные', 'url_name': 'data'},
         {'title': 'Документы', 'url_name': 'docs'},
@@ -137,6 +137,7 @@ menu = [{'title': 'Личные данные', 'url_name': 'data'},
         {'title': 'Контакты', 'url_name': 'contacts'},
         ]
 
+
 documents = [
     {'title': 'Паспорт', 'url_name': 'passport'},
     {'title': 'ИНН', 'url_name': 'inn'},
@@ -145,6 +146,7 @@ documents = [
     {'title': 'Заграничный паспорт', 'url_name': 'foreign_passport'},
     {'title': 'Военный билет', 'url_name': 'military_ticket'},
 ]
+
 
 properties = [
     {'title': 'Недвижимость', 'url_name': 'realty'},

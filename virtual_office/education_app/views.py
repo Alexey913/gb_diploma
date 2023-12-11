@@ -1,4 +1,5 @@
 import logging
+from typing import Callable
 
 from django.shortcuts import render, redirect, HttpResponse, get_object_or_404
 from django.contrib import messages
@@ -13,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 
-def show_diplomas(user_id):
+def show_diplomas(user_id: int) -> HttpResponse:
     diplomas = Diploma.objects.filter(user_id=user_id).all()
     if diplomas:
         output_diplomas = []
@@ -35,7 +36,7 @@ def show_diplomas(user_id):
 
 
 @check_authorization
-def education(request, user_id):
+def education(request: HttpResponse, user_id: int) -> HttpResponse:
     diplomas = show_diplomas(user_id)
     if diplomas:
         context = {'diplomas': diplomas,
@@ -47,7 +48,7 @@ def education(request, user_id):
 
 
 @check_authorization
-def edit_diploma(request, user_id):
+def edit_diploma(request: HttpResponse, user_id: int) -> Callable:
     if not check_doc(user_id, Diploma):
         logger.debug(f"Нет данных об образовании пользователя {user_id} - \
 переход к заполнению данных")
@@ -58,7 +59,7 @@ def edit_diploma(request, user_id):
 
 
 @check_authorization
-def show_diplomas_for_change(request, user_id):
+def show_diplomas_for_change(request: HttpResponse, user_id: int) -> HttpResponse:
     diplomas = Diploma.objects.filter(user_id=user_id).all()
     context = {'diplomas': diplomas,
                'user_id': user_id,
@@ -67,7 +68,7 @@ def show_diplomas_for_change(request, user_id):
 
 
 @check_authorization
-def add_diploma(request, user_id):
+def add_diploma(request: HttpResponse, user_id: int) -> HttpResponse:
     if request.method == 'POST':
         form = DiplomaForm(request.POST)
         if form.is_valid():
@@ -90,7 +91,7 @@ def add_diploma(request, user_id):
 
 
 @check_authorization
-def change_diploma(request, user_id, diploma_id):
+def change_diploma(request: HttpResponse, user_id: int, diploma_id: int) -> HttpResponse:
     current_diploma = Diploma.objects.filter(pk=diploma_id).first()
     if request.method == 'POST':
         form = DiplomaForm(request.POST)
@@ -103,29 +104,21 @@ def change_diploma(request, user_id, diploma_id):
             current_diploma.number = \
                 data_by_form['number'] or current_diploma.number
             current_diploma.date_registration = \
-                data_by_form['date_registration'] \
-                or current_diploma.date_registration
+                data_by_form['date_registration'] or current_diploma.date_registration
             current_diploma.registration_number = \
-                data_by_form['registration_number'] \
-                or current_diploma.registration_number
+                data_by_form['registration_number'] or current_diploma.registration_number
             current_diploma.name_institution = \
-                data_by_form['name_institution'] \
-                or current_diploma.name_institution
+                data_by_form['name_institution'] or current_diploma.name_institution
             current_diploma.year_of_start_edu = \
-                data_by_form['year_of_start_edu'] \
-                or current_diploma.year_of_start_edu
+                data_by_form['year_of_start_edu'] or current_diploma.year_of_start_edu
             current_diploma.year_of_finish_edu = \
-                data_by_form['year_of_finish_edu'] \
-                or current_diploma.year_of_finish_edu
+                data_by_form['year_of_finish_edu'] or current_diploma.year_of_finish_edu
             current_diploma.spiciality = \
-                data_by_form['spiciality'] \
-                or current_diploma.spiciality
+                data_by_form['spiciality'] or current_diploma.spiciality
             current_diploma.spicialization = \
-                data_by_form['spicialization'] \
-                or current_diploma.spicialization
+                data_by_form['spicialization'] or current_diploma.spicialization
             current_diploma.description = \
-                data_by_form['description'] \
-                or current_diploma.description
+                data_by_form['description'] or current_diploma.description
             logger.info(f"Изменение данных о дипломе {diploma_id} пользователя {user_id}")
             messages.success(request, "Данные успешно изменены")
             return redirect('education', user_id=user_id)
@@ -143,7 +136,7 @@ def change_diploma(request, user_id, diploma_id):
 
 
 @check_authorization
-def del_diploma(request, user_id, diploma_id):
+def del_diploma(request: HttpResponse, user_id: int, diploma_id: int) -> HttpResponse:
     try:
         Diploma.objects.filter(pk=diploma_id).delete()
         logger.info(f"Удалены данные об образовательном документе {diploma_id} {user_id}")

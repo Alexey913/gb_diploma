@@ -46,19 +46,3 @@ class ContactForm(forms.ModelForm):
                    'organization': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Организация'}),
                    'birthday': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
                    'place_residense': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Адрес'}), }
-
-
-# class AddContactForm(ChangeContactForm, PhoneForm, EmailForm):
-
-#     class Meta(ChangeContactForm.Meta, PhoneForm.Meta, EmailForm.Meta):
-#         model = [Contact, Email, Phone]
-
-#         fields = ChangeContactForm.Meta.fields + PhoneForm.Meta.fields + EmailForm.Meta.fields
-
-#         widgets = PhoneForm.Meta.widgets
-#         widgets['email'] = EmailForm.Meta.widgets['email']
-
-#         widget_list = ChangeContactForm.Meta.widgets
-
-#         for k, v in widget_list.items():
-#             widgets[k] = v

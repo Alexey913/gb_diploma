@@ -1,28 +1,26 @@
 import logging
+from typing import Callable
 
 from django.shortcuts import render, redirect, HttpResponse, get_object_or_404
 from django.contrib import messages
+from django.db import models
 
-from abstract_app.views import documents, menu, check_authorization, check_doc, get_data_with_verbose_name
+from abstract_app.views import documents, menu, check_authorization, \
+    check_doc, get_data_with_verbose_name
 
-from .models import Children, DriverCategory, Passport, Inn, Snils, DriverLicense, MilitaryTicket, ForeignPassport, Spouce, People, DriverCategoryShedule
-from .forms import PassportForm, InnForm, DriverLicenseForm, ForeignPassportForm, MilitaryTicketForm, SnilsForm, SpouceForm, ChildrenForm, DriverCategoryAddForm, DriverCategoryEditForm
+from .models import Children, DriverCategory, Passport, Inn, \
+    Snils, DriverLicense, MilitaryTicket, \
+    ForeignPassport, Spouce, People, DriverCategoryShedule
+
+from .forms import PassportForm, InnForm, DriverLicenseForm, \
+    ForeignPassportForm, MilitaryTicketForm, \
+    SnilsForm, SpouceForm, ChildrenForm, \
+    DriverCategoryAddForm, DriverCategoryEditForm
 
 from user_app.models import Data
 
 
 logger = logging.getLogger(__name__)
-
-
-def redirect_to_enter_doc(request: HttpResponse,
-                          user_id: int,
-                          doc: str,
-                          func_name: str) -> HttpResponse:
-    logger.debug(f"Документ {doc} пользователя {user_id} не создан - \
-попытка ввода данных")
-    messages.error(request, f'Для работы с данными документа {doc} \
-необходимо его создать')
-    return redirect(func_name, user_id=user_id)
 
 
 def load_form_people(entity: People, data_by_form: type):
@@ -35,12 +33,25 @@ def load_form_people(entity: People, data_by_form: type):
 
 
 @check_authorization
-def docs(request, user_id):
+def docs(request: HttpResponse, user_id: int) -> HttpResponse:
     context = {'title': 'Документы',
                'user_id': user_id,
                'documents': documents,
                'menu': menu}
     return render(request, 'doc_app/docs.html', context=context)
+
+
+def get_document(entity: models.Model, user_id: int, list_fields: list) -> dict:
+    data = Data.objects.values('surname', 'name', 'patronymic',
+                               'birthday', 'birth_place',
+                               'gender').filter(
+        user_id=user_id).first()
+    entity_instance = entity.objects.values(
+        *list_fields).filter(user_id=user_id).first()
+    object_data = get_object_or_404(Data, user_id=user_id)
+    object_entity = get_object_or_404(entity, user_id=user_id)
+    return {**get_data_with_verbose_name(object_data, data),
+            **get_data_with_verbose_name(object_entity, entity_instance)}
 
 
 def show_spouce(passport: Passport) -> dict:
@@ -62,50 +73,34 @@ def show_childrens(passport: Passport) -> list[dict]:
             children = Children.objects.values('surname', 'name',
                                                'patronymic', 'birthday',
                                                'gender').filter(
-                pk=child.pk).first()
+                                                   pk=child.pk).first()
             object_child = get_object_or_404(Children, pk=child.pk)
             output_cilds.append(
                 get_data_with_verbose_name(object_child, children))
         return output_cilds
 
 
+@check_doc(Passport, 'change_passport')
 @check_authorization
-def get_passport(request, user_id):
-    if check_doc(user_id, Passport):
-        data = Data.objects.values('surname', 'name', 'patronymic',
-                                   'birthday', 'birth_place',
-                                   'place_residense', 'gender').filter(
-            user_id=user_id).first()
-        passport = Passport.objects.values('series', 'number',
-                                           'date_registration',
-                                           'id_inspection',
-                                           'name_inspection',
-                                           'adress_registration',
-                                           'date_adress_reg').filter(
-            user_id=user_id).first()
-        object_data = get_object_or_404(Data, user_id=user_id)
-        object_passport = get_object_or_404(Passport, user_id=user_id)
-        spouce = show_spouce(object_passport)
-        childrens = show_childrens(object_passport)
-        context = {**get_data_with_verbose_name(object_data, data),
-                   **get_data_with_verbose_name(object_passport, passport),
-                   }
-        context_to_template = {'context': context,
-                               'spouce': spouce,
-                               'childrens': childrens,
-                               'title': 'Данные пользователя',
-                               'user_id': user_id,
-                               'menu': menu}
-        return render(request, 'doc_app/passport.html', context=context_to_template)
-    logger.debug(f"Паспорт пользователя {user_id} не создан - \
-попытка ввода данных о супруге")
-    messages.error(request,
-                   'Для работы с паспортом необходимо ввести паспортные данные')
-    return redirect('change_passport', user_id=user_id)
+def get_passport(request: HttpResponse, user_id: int) -> HttpResponse:
+    list_fields = ['series', 'number', 'date_registration',
+                   'id_inspection', 'name_inspection',
+                   'adress_registration', 'date_adress_reg']
+    object_passport = get_object_or_404(Passport, user_id=user_id)
+    spouce = show_spouce(object_passport)
+    childrens = show_childrens(object_passport)
+    context = get_document(Passport, user_id, list_fields)
+    context_to_template = {'context': context,
+                           'spouce': spouce,
+                           'childrens': childrens,
+                           'title': 'Данные пользователя',
+                           'user_id': user_id,
+                           'menu': menu}
+    return render(request, 'doc_app/passport.html', context=context_to_template)
 
 
 @check_authorization
-def change_passport(request, user_id):
+def change_passport(request: HttpResponse, user_id: int) -> HttpResponse:
     if request.method == 'POST':
         form = PassportForm(request.POST)
         if form.is_valid():
@@ -161,7 +156,7 @@ def change_passport(request, user_id):
 
 
 @check_authorization
-def add_spouce(request, user_id):
+def add_spouce(request: HttpResponse, user_id: int) -> HttpResponse:
     if request.method == 'POST':
         form = SpouceForm(request.POST)
         if form.is_valid():
@@ -190,7 +185,7 @@ def add_spouce(request, user_id):
 
 
 @check_authorization
-def change_spouce(request, user_id):
+def change_spouce(request: HttpResponse, user_id: int) -> HttpResponse:
     if request.method == 'POST':
         form = SpouceForm(request.POST)
         if form.is_valid():
@@ -215,18 +210,17 @@ def change_spouce(request, user_id):
     return render(request, 'doc_app/edit_spouce.html', context)
 
 
+@check_doc(Passport, 'change_passport')
 @check_authorization
-def edit_spouce(request, user_id):
-    if check_doc(user_id, Passport):
-        if Spouce.objects.filter(passport_id=user_id).first():
-            return change_spouce(request, user_id)
-        return add_spouce(request, user_id)
-    return redirect_to_enter_doc(request, user_id, 'Паспорт',
-                                 change_passport.__name__)
+def edit_spouce(request: HttpResponse, user_id: int) -> Callable:
+    if Spouce.objects.filter(passport_id=user_id).first():
+        return change_spouce(request, user_id)
+    messages.debug(request, "Данные о супруге отсутствуют")
+    return add_spouce(request, user_id)
 
 
 @check_authorization
-def del_spouce(request, user_id):
+def del_spouce(request: HttpResponse, user_id: int) -> HttpResponse:
     try:
         Spouce.objects.filter(passport_id=user_id).delete()
         logger.info(f"Удалены данные о супруге пользователя {user_id}")
@@ -240,7 +234,7 @@ def del_spouce(request, user_id):
 
 
 @check_authorization
-def add_children(request, user_id):
+def add_children(request: HttpResponse, user_id: int) -> HttpResponse:
     if request.method == 'POST':
         form = ChildrenForm(request.POST)
         if form.is_valid():
@@ -267,7 +261,7 @@ def add_children(request, user_id):
 
 
 @check_authorization
-def change_children(request, user_id, children_id):
+def change_children(request: HttpResponse, user_id: int, children_id: int) -> HttpResponse:
     current_children = Children.objects.filter(pk=children_id).first()
     if request.method == 'POST':
         form = ChildrenForm(request.POST)
@@ -291,7 +285,7 @@ def change_children(request, user_id, children_id):
 
 
 @check_authorization
-def show_childrens_for_change(request, user_id):
+def show_childrens_for_change(request: HttpResponse, user_id: int) -> HttpResponse:
     childrens = Passport.objects.filter(pk=user_id).first().children_set.all()
     context = {'childrens': childrens,
                'user_id': user_id,
@@ -299,19 +293,17 @@ def show_childrens_for_change(request, user_id):
     return render(request, 'doc_app/show_children.html', context=context)
 
 
+@check_doc(Passport, 'change_passport')
 @check_authorization
-def edit_children(request, user_id):
-    if check_doc(user_id, Passport):
-        if not Passport.objects.filter(pk=user_id).first().children_set.all():
-            messages.error(request, "Данные о детях отсутствуют")
-            return add_children(request, user_id)
-        return show_childrens_for_change(request, user_id)
-    return redirect_to_enter_doc(request, user_id, 'Паспорт',
-                                 change_passport.__name__)
+def edit_children(request: HttpResponse, user_id: int) -> Callable:
+    if not Passport.objects.filter(pk=user_id).first().children_set.all():
+        messages.error(request, "Данные о детях отсутствуют")
+        return add_children(request, user_id)
+    return show_childrens_for_change(request, user_id)
 
 
 @check_authorization
-def del_children(request, user_id, children_id):
+def del_children(request: HttpResponse, user_id: int, children_id: int) -> HttpResponse:
     try:
         Children.objects.filter(pk=children_id).delete()
         logger.info(f"Удалены данные о ребенке пользователя {user_id}")
@@ -324,37 +316,23 @@ def del_children(request, user_id, children_id):
         return redirect('passport', user_id=user_id)
 
 
+@check_doc(Inn, 'change_inn')
 @check_authorization
-def get_inn(request, user_id):
-    if check_doc(user_id, Inn):
-        data = Data.objects.values('surname', 'name', 'patronymic',
-                                   'birthday', 'birth_place',
-                                   'gender').filter(
-            user_id=user_id).first()
-        inn = Inn.objects.values('inn', 'series', 'number',
-                                 'date_registration',
-                                 'id_inspection',
-                                 'name_inspection').filter(
-            user_id=user_id).first()
-        object_data = get_object_or_404(Data, user_id=user_id)
-        object_inn = get_object_or_404(Inn, user_id=user_id)
-        context = {**get_data_with_verbose_name(object_data, data),
-                   **get_data_with_verbose_name(object_inn, inn),
-                   }
-        context_to_template = {'context': context,
-                               'title': 'ИНН',
-                               'user_id': user_id,
-                               'view': 'change_inn',
-                               'menu': menu}
-        return render(request, 'doc_app/base_doc.html', context=context_to_template)
-    logger.debug(f"ИНН пользователя {user_id} не существует")
-    messages.error(request,
-                   'Для работы с ИНН необходимо ввести данные ФНС')
-    return redirect('change_inn', user_id=user_id)
+def get_inn(request: HttpResponse, user_id: int) -> HttpResponse:
+    list_fields = ['inn', 'series', 'number',
+                   'date_registration', 'id_inspection',
+                   'name_inspection']
+    context = get_document(Inn, user_id, list_fields)
+    context_to_template = {'context': context,
+                           'title': 'ИНН',
+                           'user_id': user_id,
+                           'view': 'change_inn',
+                           'menu': menu}
+    return render(request, 'doc_app/base_doc.html', context=context_to_template)
 
 
 @check_authorization
-def change_inn(request, user_id):
+def change_inn(request: HttpResponse, user_id: int) -> HttpResponse:
     if request.method == 'POST':
         form = InnForm(request.POST)
         if form.is_valid():
@@ -367,17 +345,12 @@ def change_inn(request, user_id):
                 current_inn.number = \
                     data_by_form['number'] or current_inn.number
                 current_inn.date_registration = \
-                    data_by_form['date_registration'] \
-                    or current_inn.date_registration
+                    data_by_form['date_registration'] or current_inn.date_registration
                 current_inn.id_inspection = \
-                    data_by_form['id_inspection'] \
-                    or current_inn.id_inspection
+                    data_by_form['id_inspection'] or current_inn.id_inspection
                 current_inn.name_inspection = \
-                    data_by_form['name_inspection'] \
-                    or current_inn.name_inspection
-                current_inn.inn = \
-                    data_by_form['inn'] \
-                    or current_inn.inn
+                    data_by_form['name_inspection'] or current_inn.name_inspection
+                current_inn.inn = data_by_form['inn'] or current_inn.inn
                 current_inn.save()
             else:
                 inn = form.save(commit=False)
@@ -399,37 +372,22 @@ def change_inn(request, user_id):
     return render(request, 'doc_app/base_change_doc.html', context=context)
 
 
+@check_doc(Snils, 'change_snils')
 @check_authorization
-def get_snils(request, user_id):
-    if check_doc(user_id, Inn):
-        data = Data.objects.values('surname', 'name', 'patronymic',
-                                   'birthday', 'birth_place',
-                                   'gender').filter(
-            user_id=user_id).first()
-        snils = Snils.objects.values('number',
-                                     'date_registration',
-                                     'id_inspection',
-                                     'name_inspection').filter(
-            user_id=user_id).first()
-        object_data = get_object_or_404(Data, user_id=user_id)
-        object_snils = get_object_or_404(Snils, user_id=user_id)
-        context = {**get_data_with_verbose_name(object_data, data),
-                   **get_data_with_verbose_name(object_snils, snils),
-                   }
-        context_to_template = {'context': context,
-                               'title': 'CНИЛС',
-                               'user_id': user_id,
-                               'view': 'change_snils',
-                               'menu': menu}
-        return render(request, 'doc_app/base_doc.html', context=context_to_template)
-    logger.debug(f"СНИЛС пользователя {user_id} не существует")
-    messages.error(request,
-                   'Для работы со СНИЛС необходимо ввести данные')
-    return redirect('change_snils', user_id=user_id)
+def get_snils(request: HttpResponse, user_id: int) -> HttpResponse:
+    list_fields = ['number', 'date_registration',
+                   'id_inspection', 'name_inspection']
+    context = get_document(Snils, user_id, list_fields)
+    context_to_template = {'context': context,
+                           'title': 'CНИЛС',
+                           'user_id': user_id,
+                           'view': 'change_snils',
+                           'menu': menu}
+    return render(request, 'doc_app/base_doc.html', context=context_to_template)
 
 
 @check_authorization
-def change_snils(request, user_id):
+def change_snils(request: HttpResponse, user_id: int) -> HttpResponse:
     if request.method == 'POST':
         form = SnilsForm(request.POST)
         if form.is_valid():
@@ -440,14 +398,11 @@ def change_snils(request, user_id):
                 current_inn.number = \
                     data_by_form['number'] or current_inn.number
                 current_inn.date_registration = \
-                    data_by_form['date_registration'] \
-                    or current_inn.date_registration
+                    data_by_form['date_registration'] or current_inn.date_registration
                 current_inn.id_inspection = \
-                    data_by_form['id_inspection'] \
-                    or current_inn.id_inspection
+                    data_by_form['id_inspection'] or current_inn.id_inspection
                 current_inn.name_inspection = \
-                    data_by_form['name_inspection'] \
-                    or current_inn.name_inspection
+                    data_by_form['name_inspection'] or current_inn.name_inspection
                 current_inn.save()
             else:
                 inn = form.save(commit=False)
@@ -470,7 +425,7 @@ def change_snils(request, user_id):
 
 
 @check_authorization
-def add_driver_category(request, user_id):
+def add_driver_category(request: HttpResponse, user_id: int) -> HttpResponse:
     if request.method == 'POST':
         form = DriverCategoryAddForm(request.POST)
         if form.is_valid():
@@ -494,33 +449,33 @@ def add_driver_category(request, user_id):
 
 
 @check_authorization
-def del_driver_category(request, user_id, category_id):
+def del_driver_category(request: HttpResponse, user_id: int, category_id: int) -> HttpResponse:
     try:
         DriverCategoryShedule.objects.filter(
             driver_license_id=user_id, category_id=category_id).delete()
-        logger.info(f"Удалены данные о категории {category_id} пользователя {user_id}")
+        logger.info(
+            f"Удалены данные о категории {category_id} пользователя {user_id}")
         messages.success(request, "Данные успешно удалены")
     except:
-        logger.debug(f"Ошибка удаления данных о категории {category_id} пользователя {user_id}")
+        logger.debug(
+            f"Ошибка удаления данных о категории {category_id} пользователя {user_id}")
         messages.error(request, "Данных не сущствует")
     finally:
-        return redirect ('driver_license', user_id=user_id)
+        return redirect('driver_license', user_id=user_id)
+
+
+@check_doc(DriverLicense, 'change_driver_license')
+@check_authorization
+def edit_driver_categories(request: HttpResponse, user_id: int) -> Callable:
+    if not DriverLicense.objects.filter(pk=user_id).first().categories.all():
+        messages.error(
+            request, "Данные об открытых категориях отсутствуют")
+        return change_driver_license(request, user_id)
+    return show_categories_for_change(request, user_id)
 
 
 @check_authorization
-def edit_driver_categories(request, user_id):
-    if check_doc(user_id, DriverLicense):
-        if not DriverLicense.objects.filter(pk=user_id).first().categories.all():
-            messages.error(
-                request, "Данные об открытых категориях отсутствуют")
-            return change_driver_license(request, user_id)
-        return show_categories_for_change(request, user_id)
-    return redirect_to_enter_doc(request, user_id, 'Водительское удостоверение',
-                                 change_driver_license.__name__)
-
-
-@check_authorization
-def change_driver_category(request, user_id, category_id):
+def change_driver_category(request: HttpResponse, user_id: int, category_id: int) -> HttpResponse:
     current_shedule_cat = DriverCategoryShedule.objects.filter(
         driver_license_id=user_id, category_id=category_id).first()
     if request.method == 'POST':
@@ -552,7 +507,7 @@ def change_driver_category(request, user_id, category_id):
 
 
 @check_authorization
-def show_categories_for_change(request, user_id):
+def show_categories_for_change(request: HttpResponse, user_id: int) -> HttpResponse:
     categories = DriverLicense.objects.filter(
         pk=user_id).first().categories.all().order_by('name')
     context = {'categories': categories,
@@ -575,48 +530,32 @@ def show_driver_categories(driver_license: DriverLicense) -> list[dict]:
             object_category = get_object_or_404(DriverCategoryShedule, pk=cat.pk)
             temp = get_data_with_verbose_name(object_category, category)
             print(temp)
-            temp['Категория'] = DriverCategory.objects.get(id=temp['Категория'])
+            temp['Категория'] = DriverCategory.objects.get(
+                id=temp['Категория'])
             output_cats.append(temp)
         return output_cats
-    
 
+
+@check_doc(DriverLicense, 'change_driver_license')
 @check_authorization
-def get_driver_license(request, user_id):
-    if check_doc(user_id, DriverLicense):
-        data = Data.objects.values('surname', 'name', 'patronymic',
-                                   'birthday', 'birth_place', 'gender').filter(
-            user_id=user_id).first()
-        license = DriverLicense.objects.values('series', 'number',
-                                               'date_registration',
-                                               'id_inspection',
-                                               'name_inspection',
-                                               'date_end_action',
-                                               'date_start_expirience',
-                                               'special_marks',
-                                               'categories').filter(
-            user_id=user_id).first()
-        object_data = get_object_or_404(Data, user_id=user_id)
-        object_license = get_object_or_404(DriverLicense, user_id=user_id)
-        context = {**get_data_with_verbose_name(object_data, data),
-                   **get_data_with_verbose_name(object_license, license),
-                   }
-        categories = show_driver_categories(object_license)
-        context_to_template = {'context': context,
-                               'categories': categories,
-                               'title': 'Водительское удостоверение',
-                               'view': 'change_driver_license',
-                               'user_id': user_id,
-                               'menu': menu}
-        return render(request, 'doc_app/driver_license.html', context=context_to_template)
-    logger.debug(f"Водительское удостоверение пользователя {user_id} не создано - \
-ВУ еще не создано")
-    messages.error(request,
-                   'Для работы с водительским удостоверением необходимо ввести данные')
-    return redirect('change_driver_license', user_id=user_id)
+def get_driver_license(request: HttpResponse, user_id: int) -> HttpResponse:
+    list_fields = ['series', 'number', 'date_registration',
+                   'id_inspection', 'name_inspection', 'date_end_action',
+                   'date_start_expirience', 'special_marks', 'categories']
+    context = get_document(DriverLicense, user_id, list_fields)
+    object_license = get_object_or_404(DriverLicense, user_id=user_id)
+    categories = show_driver_categories(object_license)
+    context_to_template = {'context': context,
+                           'categories': categories,
+                           'title': 'Водительское удостоверение',
+                           'view': 'change_driver_license',
+                           'user_id': user_id,
+                           'menu': menu}
+    return render(request, 'doc_app/driver_license.html', context=context_to_template)
 
 
 @check_authorization
-def change_driver_license(request, user_id):
+def change_driver_license(request: HttpResponse, user_id: int) -> HttpResponse:
     if request.method == 'POST':
         form = DriverLicenseForm(request.POST)
         if form.is_valid():
@@ -629,23 +568,17 @@ def change_driver_license(request, user_id):
                 current_license.number = \
                     data_by_form['number'] or current_license.number
                 current_license.date_registration = \
-                    data_by_form['date_registration'] \
-                    or current_license.date_registration
+                    data_by_form['date_registration'] or current_license.date_registration
                 current_license.id_inspection = \
-                    data_by_form['id_inspection'] \
-                    or current_license.id_inspection
+                    data_by_form['id_inspection'] or current_license.id_inspection
                 current_license.name_inspection = \
-                    data_by_form['name_inspection'] \
-                    or current_license.name_inspection
+                    data_by_form['name_inspection'] or current_license.name_inspection
                 current_license.date_end_action = \
-                    data_by_form['date_end_action'] \
-                    or current_license.date_end_action
+                    data_by_form['date_end_action'] or current_license.date_end_action
                 current_license.date_start_expirience = \
-                    data_by_form['date_start_expirience'] \
-                    or current_license.date_start_expirience
+                    data_by_form['date_start_expirience'] or current_license.date_start_expirience
                 current_license.special_marks = \
-                    data_by_form['special_marks'] \
-                    or current_license.special_marks
+                    data_by_form['special_marks'] or current_license.special_marks
                 categories = data_by_form['categories']
                 if categories:
                     current_license.categories.set(categories)
@@ -670,41 +603,23 @@ def change_driver_license(request, user_id):
     return render(request, 'doc_app/change_driver_license.html', context=context)
 
 
+@check_doc(ForeignPassport, 'change_foreign_passport')
 @check_authorization
-def get_foreign_passport(request, user_id):
-    if check_doc(user_id, ForeignPassport):
-        data = Data.objects.values('surname', 'name', 'patronymic',
-                                   'birthday', 'birth_place', 'gender').filter(
-            user_id=user_id).first()
-        foreign_pass = ForeignPassport.objects.values('series', 'number',
-                                                      'date_registration',
-                                                      'id_inspection',
-                                                      'name_inspection',
-                                                      'foreign_name',
-                                                      'foreign_surname',
-                                                      'date_end_action').filter(
-            user_id=user_id).first()
-        object_data = get_object_or_404(Data, user_id=user_id)
-        object_foreign_pass = get_object_or_404(
-            ForeignPassport, user_id=user_id)
-        context = {**get_data_with_verbose_name(object_data, data),
-                   **get_data_with_verbose_name(object_foreign_pass, foreign_pass),
-                   }
-        context_to_template = {'context': context,
-                               'title': 'Заграничный паспорт',
-                               'view': 'change_foreign_passport',
-                               'user_id': user_id,
-                               'menu': menu}
-        return render(request, 'doc_app/base_doc.html', context=context_to_template)
-    logger.debug(f"Заграничный паспорт пользователя {user_id} не создан - \
-ошибка ввода данных")
-    messages.error(request,
-                   'Для работы с заграничным паспортом необходимо ввести данные')
-    return redirect('change_foreign_passport', user_id=user_id)
+def get_foreign_passport(request: HttpResponse, user_id: int) -> HttpResponse:
+    list_fields = ['series', 'number', 'date_registration',
+                   'id_inspection', 'name_inspection', 'foreign_name',
+                   'foreign_surname', 'date_end_action']
+    context = get_document(DriverLicense, user_id, list_fields)
+    context_to_template = {'context': context,
+                           'title': 'Заграничный паспорт',
+                           'view': 'change_foreign_passport',
+                           'user_id': user_id,
+                           'menu': menu}
+    return render(request, 'doc_app/base_doc.html', context=context_to_template)
 
 
 @check_authorization
-def change_foreign_passport(request, user_id):
+def change_foreign_passport(request: HttpResponse, user_id: int) -> HttpResponse:
     if request.method == 'POST':
         form = ForeignPassportForm(request.POST)
         if form.is_valid():
@@ -717,23 +632,17 @@ def change_foreign_passport(request, user_id):
                 current_foreign_pass.number = \
                     data_by_form['number'] or current_foreign_pass.number
                 current_foreign_pass.date_registration = \
-                    data_by_form['date_registration'] \
-                    or current_foreign_pass.date_registration
+                    data_by_form['date_registration'] or current_foreign_pass.date_registration
                 current_foreign_pass.id_inspection = \
-                    data_by_form['id_inspection'] \
-                    or current_foreign_pass.id_inspection
+                    data_by_form['id_inspection'] or current_foreign_pass.id_inspection
                 current_foreign_pass.name_inspection = \
-                    data_by_form['name_inspection'] \
-                    or current_foreign_pass.name_inspection
+                    data_by_form['name_inspection'] or current_foreign_pass.name_inspection
                 current_foreign_pass.date_end_action = \
-                    data_by_form['date_end_action'] \
-                    or current_foreign_pass.date_end_action
+                    data_by_form['date_end_action'] or current_foreign_pass.date_end_action
                 current_foreign_pass.foreign_name = \
-                    data_by_form['foreign_name'] \
-                    or current_foreign_pass.foreign_name
+                    data_by_form['foreign_name'] or current_foreign_pass.foreign_name
                 current_foreign_pass.foreign_surname = \
-                    data_by_form['foreign_surname'] \
-                    or current_foreign_pass.foreign_surname
+                    data_by_form['foreign_surname'] or current_foreign_pass.foreign_surname
                 current_foreign_pass.save()
             else:
                 foreign_pass = form.save(commit=False)
@@ -757,40 +666,23 @@ def change_foreign_passport(request, user_id):
     return render(request, 'doc_app/base_change_doc.html', context=context)
 
 
+@check_doc(MilitaryTicket, 'change_military_ticket')
 @check_authorization
-def get_military_ticket(request, user_id):
-    if check_doc(user_id, MilitaryTicket):
-        data = Data.objects.values('surname', 'name', 'patronymic',
-                                   'birthday', 'birth_place', 'gender').filter(
-            user_id=user_id).first()
-        military_ticket = MilitaryTicket.objects.values('series', 'number',
-                                                        'date_registration',
-                                                        'id_inspection',
-                                                        'name_inspection',
-                                                        'category',
-                                                        'speciality',
-                                                        'description').filter(
-            user_id=user_id).first()
-        object_data = get_object_or_404(Data, user_id=user_id)
-        object_ticket = get_object_or_404(MilitaryTicket, user_id=user_id)
-        context = {**get_data_with_verbose_name(object_data, data),
-                   **get_data_with_verbose_name(object_ticket, military_ticket),
-                   }
-        context_to_template = {'context': context,
-                               'title': 'Военыый билет',
-                               'view': 'change_military_ticket',
-                               'user_id': user_id,
-                               'menu': menu}
-        return render(request, 'doc_app/base_doc.html', context=context_to_template)
-    logger.debug(f"Военный билет пользователя {user_id} не создан - \
-ошибка ввода данных")
-    messages.error(request,
-                   'Для работы с военным билетом необходимо ввести данные')
-    return redirect('change_military_ticket', user_id=user_id)
+def get_military_ticket(request: HttpResponse, user_id: int) -> HttpResponse:
+    list_fields = ['series', 'number', 'date_registration',
+                   'id_inspection', 'name_inspection', 'category',
+                   'speciality', 'description']
+    context = get_document(MilitaryTicket, user_id, list_fields)
+    context_to_template = {'context': context,
+                           'title': 'Военыый билет',
+                           'view': 'change_military_ticket',
+                           'user_id': user_id,
+                           'menu': menu}
+    return render(request, 'doc_app/base_doc.html', context=context_to_template)
 
 
 @check_authorization
-def change_military_ticket(request, user_id):
+def change_military_ticket(request: HttpResponse, user_id: int) -> HttpResponse:
     if request.method == 'POST':
         form = MilitaryTicketForm(request.POST)
         if form.is_valid():
@@ -803,23 +695,16 @@ def change_military_ticket(request, user_id):
                 current_ticket.number = \
                     data_by_form['number'] or current_ticket.number
                 current_ticket.date_registration = \
-                    data_by_form['date_registration'] \
-                    or current_ticket.date_registration
+                    data_by_form['date_registration'] or current_ticket.date_registration
                 current_ticket.id_inspection = \
-                    data_by_form['id_inspection'] \
-                    or current_ticket.id_inspection
+                    data_by_form['id_inspection'] or current_ticket.id_inspection
                 current_ticket.name_inspection = \
-                    data_by_form['name_inspection'] \
-                    or current_ticket.name_inspection
-                current_ticket.category = \
-                    data_by_form['category'] \
-                    or current_ticket.category
+                    data_by_form['name_inspection'] or current_ticket.name_inspection
+                current_ticket.category = data_by_form['category'] or current_ticket.category
                 current_ticket.speciality = \
-                    data_by_form['speciality'] \
-                    or current_ticket.speciality
+                    data_by_form['speciality'] or current_ticket.speciality
                 current_ticket.description = \
-                    data_by_form['description'] \
-                    or current_ticket.description
+                    data_by_form['description'] or current_ticket.description
                 current_ticket.save()
             else:
                 ticket = form.save(commit=False)

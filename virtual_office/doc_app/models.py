@@ -6,14 +6,15 @@ from user_app.models import User
 
 from abstract_app.views import MILITARY_CATEGORIES
 
+
 class Document(DocTemplate):
 
     user = models.OneToOneField(
         User, on_delete=models.CASCADE, primary_key=True)
-    
+
     class Meta:
         abstract = True
-    
+
 
 class Spouce(People):
     date_marriage = models.DateField(
@@ -59,7 +60,8 @@ class Snils(Document):
 
 class DriverCategory(models.Model):
     name = models.CharField(max_length=3, verbose_name='Категория')
-    description = models.CharField(max_length=60, verbose_name='Транспортное средстов')
+    description = models.CharField(
+        max_length=60, verbose_name='Транспортное средстов')
 
     def __str__(self) -> str:
         return f'{self.name} - {self.description}'
@@ -75,15 +77,18 @@ class DriverLicense(Document):
     special_marks = models.CharField(
         max_length=40, null=True, blank=True, verbose_name='Особые отметки')
     categories = models.ManyToManyField(
-        'DriverCategory', blank=True, through='DriverCategoryShedule', verbose_name='Разрешенные категории')
+        'DriverCategory', blank=True, through='DriverCategoryShedule',
+        verbose_name='Разрешенные категории')
 
     class Meta:
         db_table = "doc_app_driver_license"
 
 
 class DriverCategoryShedule(models.Model):
-    driver_license = models.ForeignKey(DriverLicense, on_delete=models.CASCADE, verbose_name='ВУ')
-    category = models.ForeignKey(DriverCategory, on_delete=models.CASCADE, verbose_name='Категория')
+    driver_license = models.ForeignKey(
+        DriverLicense, on_delete=models.CASCADE, verbose_name='ВУ')
+    category = models.ForeignKey(
+        DriverCategory, on_delete=models.CASCADE, verbose_name='Категория')
     date_begin = models.DateField(
         null=True, default=None, verbose_name='Начало действия')
     date_end = models.DateField(
@@ -107,7 +112,7 @@ class ForeignPassport(Document):
 
 
 class MilitaryTicket(Document):
-    category = models.CharField(max_length=40, null=True, blank=True, choices=sorted(
+    category = models.CharField(max_length=40, choices=sorted(
         MILITARY_CATEGORIES), verbose_name='Призывная категория')
     speciality = models.CharField(
         max_length=50, verbose_name='Военная специальность')

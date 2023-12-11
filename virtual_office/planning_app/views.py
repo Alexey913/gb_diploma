@@ -1,8 +1,10 @@
-from django.utils.timezone import now
+from typing import Callable
 from django.shortcuts import render, redirect, HttpResponse, get_object_or_404
 from django.contrib import messages
 
-from abstract_app.views import  menu, check_authorization, check_doc, get_data_with_verbose_name
+from abstract_app.views import  menu, check_authorization, get_data_with_verbose_name
+
+from django.db.models.query import QuerySet
 
 
 import locale
@@ -14,12 +16,12 @@ import numpy as np
 from calendar import HTMLCalendar
 from datetime import datetime
 
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from dateutil import rrule
 
 from .models import Remind
-from .forms import RemindForm, SearchRemindTitleForm
+from .forms import RemindForm
 
 
 locale.setlocale(
@@ -43,7 +45,8 @@ def show_calendar() -> dict:
             'time': time
             }
 
-def get_reminds(request, user_id, reminds, mes):
+
+def get_reminds(request: HttpResponse, user_id: int, reminds: QuerySet, mes: str) -> HttpResponse:
     context = {'date_dict': show_calendar(),
                'user_id': user_id,
                'reminds': reminds,
@@ -52,9 +55,8 @@ def get_reminds(request, user_id, reminds, mes):
     return render(request, 'planning_app/reminds.html', context=context)
 
 
-
 @check_authorization
-def reminds(request, user_id):
+def reminds(request: HttpResponse, user_id: int) -> Callable:
     today = datetime.today() 
     reminds = Remind.objects.filter(user_id=user_id,
                                     date__year=today.year,
@@ -65,7 +67,7 @@ def reminds(request, user_id):
    
 
 @check_authorization
-def reminds_at_current_month(request, user_id):
+def reminds_at_current_month(request: HttpResponse, user_id: int) -> Callable:
     today = datetime.today()
     reminds = Remind.objects.filter(user_id=user_id,
                                     date__year=today.year,
@@ -74,8 +76,43 @@ def reminds_at_current_month(request, user_id):
     return get_reminds(request, user_id, reminds, mes)
 
 
+def func_for_add_repeat_events(remind:Remind, func: Callable, delta: int, period: str):
+    end_date_year = int(str(np.datetime64(str(datetime.now().year)) + np.timedelta64(100,'Y')))
+    current_day = remind.date
+    end_date=datetime(year=end_date_year-delta, month=1, day=1)
+    for dt in rrule.rrule(func, dtstart=current_day, until=end_date):
+            Remind.objects.bulk_create(title=remind.title,
+                                        date=dt, time=remind.time,
+                                        all_day=remind.all_day,
+                                        repeat=period,
+                                        description=remind.description,
+                                        user = remind.user,
+                                        repeat_id=remind.pk)
+
+
+def add_event_with_repeat(remind:Remind):
+    if remind.repeat == 'Каждый день':
+        func_for_add_repeat_events(remind, rrule.DAILY, 98, 'Каждый день')
+    elif remind.repeat == 'Каждую неделю':
+        func_for_add_repeat_events(remind, rrule.WEEKLY, 95, 'Каждую неделю')
+    elif remind.repeat == 'Каждый месяц':
+        func_for_add_repeat_events(remind, rrule.MONTHLY, 80, 'Каждый месяц')
+    elif remind.repeat == 'Каждый год':
+        func_for_add_repeat_events(remind, rrule.YEARLY, 0, 'Каждый год')
+
+
+def get_dict_remind(remind_id: int) -> Callable:
+    remind = Remind.objects.values('title', 'date','time', 'repeat',
+                                           'description').filter(
+                                               pk=remind_id).first()
+    object_remind = get_object_or_404(Remind, pk=remind_id)
+    if object_remind.all_day:
+        remind['time'] = 'Целый день'
+    return get_data_with_verbose_name(object_remind, remind)
+
+
 @check_authorization
-def add_remind(request, user_id):
+def add_remind(request: HttpResponse, user_id: int) -> HttpResponse:
     if request.method == 'POST':
         form = RemindForm(request.POST)
         if form.is_valid():
@@ -101,8 +138,9 @@ def add_remind(request, user_id):
                'menu': menu}
     return render(request, 'planning_app/new_remind.html', context=context)
 
+
 @check_authorization
-def change_remind(request, user_id, remind_id):
+def change_remind(request: HttpResponse, user_id: int, remind_id: int) -> HttpResponse:
     current_remind = Remind.objects.filter(pk=remind_id).first()
     dict_remind = get_dict_remind(remind_id)
     if request.method == 'POST':
@@ -139,7 +177,7 @@ def change_remind(request, user_id, remind_id):
 
 
 @check_authorization
-def show_remind(request, user_id, remind_id):
+def show_remind(request: HttpResponse, user_id: int, remind_id: int) -> HttpResponse:
     current_remind = get_dict_remind(remind_id)
     context = {'date_dict': show_calendar(),
                'remind': current_remind,
@@ -151,7 +189,7 @@ def show_remind(request, user_id, remind_id):
 
 
 @check_authorization
-def del_remind(request, user_id, remind_id):
+def del_remind(request: HttpResponse, user_id: int, remind_id: int) -> HttpResponse:
     try:
         current_remind = Remind.objects.filter(pk=remind_id).first()
         repeat_id = current_remind.repeat_id
@@ -184,7 +222,7 @@ def del_remind(request, user_id, remind_id):
 #                'menu': menu}
 #     return render(request, 'planning_app/base.html', context=context)
 
-def search_reminds_by_title(request, user_id):
+def search_reminds_by_title(request: HttpResponse, user_id: int) -> Callable:
     if request.method == 'GET':
         title = request.GET.get('search_box', None)
         # date = data_by_form['date']
@@ -198,38 +236,3 @@ def search_reminds_by_title(request, user_id):
     #            'form': form,
     #            'menu': menu}
     # return render(request, 'planning_app/base.html', context=context)
-
-
-def func_for_add_repeat_events(remind, func, delta, period):
-    end_date_year = int(str(np.datetime64(str(datetime.now().year)) + np.timedelta64(100,'Y')))
-    current_day = remind.date
-    end_date=datetime(year=end_date_year-delta, month=1, day=1)
-    for dt in rrule.rrule(func, dtstart=current_day, until=end_date):
-            Remind.objects.bulk_create(title=remind.title,
-                                        date=dt, time=remind.time,
-                                        all_day=remind.all_day,
-                                        repeat=period,
-                                        description=remind.description,
-                                        user = remind.user,
-                                        repeat_id=remind.pk)
-
-
-def add_event_with_repeat(remind:Remind):
-    if remind.repeat == 'Каждый день':
-        func_for_add_repeat_events(remind, rrule.DAILY, 99, 'Каждый день')
-    elif remind.repeat == 'Каждую неделю':
-        func_for_add_repeat_events(remind, rrule.WEEKLY, 95, 'Каждую неделю')
-    elif remind.repeat == 'Каждый месяц':
-        func_for_add_repeat_events(remind, rrule.MONTHLY, 80, 'Каждый месяц')
-    elif remind.repeat == 'Каждый год':
-        func_for_add_repeat_events(remind, rrule.YEARLY, 0, 'Каждый год')
-
-
-def get_dict_remind(remind_id):
-    remind = Remind.objects.values('title', 'date','time', 'repeat',
-                                           'description').filter(
-                                               pk=remind_id).first()
-    object_remind = get_object_or_404(Remind, pk=remind_id)
-    if object_remind.all_day:
-        remind['time'] = 'Целый день'
-    return get_data_with_verbose_name(object_remind, remind)

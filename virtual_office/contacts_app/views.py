@@ -1,21 +1,25 @@
 import logging
-from django import forms
+from typing import Callable
 
 from django.shortcuts import render, redirect, HttpResponse, get_object_or_404
 from django.contrib import messages
 
-from abstract_app.views import properties, menu, check_authorization, check_doc, get_data_with_verbose_name
+from django.db import models
+
+from django import forms
+
+
+from abstract_app.views import menu, check_authorization, get_data_with_verbose_name
 
 from .models import Contact, Phone, Email
 from .forms import ContactForm, PhoneForm, EmailForm
-from user_app.models import Data
 
 
 logger = logging.getLogger(__name__)
 
 
 @check_authorization
-def get_contacts(request, user_id):
+def get_contacts(request: HttpResponse, user_id: int) -> HttpResponse:
     contacts = Contact.objects.filter(user_id=user_id).all()
     context = {'title': 'Контакты',
                'user_id': user_id,
@@ -25,7 +29,7 @@ def get_contacts(request, user_id):
 
 
 @check_authorization
-def show_contact(request, user_id, contact_id):
+def show_contact(request: HttpResponse, user_id: int, contact_id: int) -> HttpResponse:
     object_contact = get_object_or_404(Contact, pk=contact_id)
     contact = Contact.objects.values('surname', 'name', 'patronymic',
                                      'organization', 'birthday',
@@ -46,7 +50,7 @@ def show_contact(request, user_id, contact_id):
 
 
 @check_authorization
-def add_contact(request, user_id):
+def add_contact(request: HttpResponse, user_id: int) -> HttpResponse:
     if request.method == 'POST':
         contact_form = ContactForm(request.POST)
         phone_form = PhoneForm(request.POST)
@@ -83,174 +87,145 @@ def add_contact(request, user_id):
     return render(request, 'contacts_app/new_contact.html', context=context)
 
 
-@check_authorization
-def add_phone(request, user_id, contact_id):
+def add_phone_or_email(request: HttpResponse, user_id: int,
+                       contact_id: int, entity:models.Model,
+                       form_type: forms.ModelForm, field: str, view: str,
+                       mes_sucsess: str, mes_error:str) -> HttpResponse:
     if request.method == 'POST':
-        phone_form = PhoneForm(request.POST)
-        if phone_form.is_valid() and phone_form.has_changed():
-            if not Phone.objects.filter(phone=phone_form.cleaned_data['phone'],
-                                    contact_id=contact_id).first():
-                phone = phone_form.save(commit=False)
-                phone.contact_id = contact_id
-                phone.save()
-                messages.success(request, "Номер телефона добавлен")
+        form = form_type(request.POST)
+        if form.is_valid() and form.has_changed():
+            kwargs = {field: form.cleaned_data[field], 'contact_id': contact_id}
+            if not entity.objects.filter(**kwargs).first():
+                entity_instatnce = form.save(commit=False)
+                entity_instatnce.contact_id = contact_id
+                entity_instatnce.save()
+                messages.success(request, mes_sucsess)
                 logger.info(f"Сохранение данных контакта {contact_id} \
 пользователя {user_id}")
                 return redirect('show_contact', user_id=user_id, contact_id=contact_id)
             else:
                 logger.debug(f"Ошибка сохранения данных контакта пользователя {user_id}")
-                messages.error(request, "Телефон пользователя уже существует")
+                messages.error(request, mes_error)
         else:
             logger.debug(
                 f"Ошибка сохранения данных контакта пользователя {user_id}")
-            messages.error(request, "Необходимо ввести номер телефона")
+            messages.error(request, "Необходимо ввести данные")
     else:
-        phone_form = PhoneForm()
-    context = {'form': phone_form,
+        form = form_type()
+    context = {'form': form,
                'title': f'Контакт {contact_id}',
                'user_id': user_id,
                'contact_id': contact_id,
-               'view': 'add_phone',
+               'view': view,
                'menu': menu}
     return render(request, 'contacts_app/edit_contact.html', context=context)
 
 
 @check_authorization
-def add_email(request, user_id, contact_id):
-    if request.method == 'POST':
-        email_form = EmailForm(request.POST)
-        if email_form.is_valid() and email_form.has_changed():
-            if not Email.objects.filter(email=email_form.cleaned_data['email'],
-                                        contact_id=contact_id).first():
-                email = email_form.save(commit=False)
-                email.contact_id = contact_id
-                email.save()
-                messages.success(request, "E-mail добавлен")
-                logger.info(f"Сохранение данных контакта {contact_id} \
-пользователя {user_id}")
-                return redirect('show_contact', user_id=user_id, contact_id=contact_id)
-            else:
-                logger.debug(f"Ошибка сохранения данных контакта пользователя \
-{user_id} - дублирование e-mail")
-                messages.error(request, "E-mail пользователя уже существует")
-        else:
-            logger.debug(f"Ошибка сохранения данных контакта пользователя {user_id}")
-            messages.error(request, "Необходимо ввести e-mail")
-    else:
-        email_form = EmailForm()
-    context = {'form': email_form,
-               'title': f'Контакт {contact_id}',
-               'user_id': user_id,
-               'contact_id': contact_id,
-               'view': 'add_email',
-               'menu': menu}
-    return render(request, 'contacts_app/edit_contact.html', context=context)
-
+def add_phone(request: HttpResponse, user_id: int, contact_id: int) -> Callable:
+    return add_phone_or_email(request, user_id, contact_id, Phone,
+                       PhoneForm, 'phone', 'add_phone',
+                       "Номер телефона добавлен",
+                       "Телефон пользователя уже существует")
+    
 
 @check_authorization
-def change_email(request, user_id, contact_id, email_id):
-    current_email = Email.objects.filter(pk=email_id)
+def add_email(request: HttpResponse, user_id: int, contact_id: int) -> Callable:
+    return add_phone_or_email(request, user_id, contact_id, Email,
+                       EmailForm, 'email', 'add_email', "E-mail добавлен",
+                       "E-mail пользователя уже существует")
+    
+    
+@check_authorization
+def change_phone_or_email(request: HttpResponse, user_id: int,
+                          contact_id: int, instance_id,
+                          entity: models.Model, form_type: forms.ModelForm,
+                          field: str, note: str,
+                          mes_sucsess: str, mes_error:str) -> HttpResponse:
+    current_instance = entity.objects.filter(pk=instance_id).first()
     if request.method == 'POST':
-        email_form = EmailForm(request.POST)
-        if email_form.is_valid() and email_form.has_changed():
-            input_email = email_form.cleaned_data['email']
-            if not Email.objects.filter(email=input_email,
-                                        contact_id=contact_id).first():
-                current_email.email = input_email
-                current_email.save()
-                messages.success(request, "E-mail изменен")
+        form = form_type(request.POST)
+        if form.is_valid() and form.has_changed():
+            input_instance = form.cleaned_data[field]
+            kwargs = {field: input_instance, 'contact_id': contact_id}
+            print(kwargs)
+            if not entity.objects.filter(**kwargs).first():
+                setattr(current_instance, field, input_instance)
+                current_instance.save()
+                messages.success(request, mes_sucsess)
                 logger.info(f"Сохранение данных контакта {contact_id} \
 пользователя {user_id}")
                 return redirect('show_contact', user_id=user_id, contact_id=contact_id)
             else:
                 logger.debug(f"Ошибка сохранения данных контакта пользователя \
-{user_id} - дублирование e-mail")
-                messages.error(request, "E-mail пользователя уже существует")
+{user_id} - {mes_error}")
+                messages.error(request, mes_error)
         else:
             logger.debug(f"Ошибка сохранения данных контакта пользователя {user_id}")
-            messages.error(request, "Необходимо ввести e-mail")
+            messages.error(request, "Необходимо ввести данные")
     else:
-        email_form = EmailForm()
-    context = {'form': email_form,
-               'title': f'E-mail {email_id}',
+        form = form_type()
+    context = {'form': form,
+               'title': f'{note} {current_instance}',
                'user_id': user_id,
                'contact_id': contact_id,
-               'change_pk': email_id,
-               'change_note': 'change_email',
-               'note': 'e-mail',
-               'del_note': 'del_email',
+               'change_pk': instance_id,
+               'change_note': 'change_'+field,
+               'note': note,
+               'del_note': 'del_'+field,
                'menu': menu}
     return render(request, 'contacts_app/edit_contact_data.html', context=context)
 
 
 @check_authorization
-def change_phone(request, user_id, contact_id, phone_id):
-    current_phone = Phone.objects.filter(pk=phone_id)
-    if request.method == 'POST':
-        phone_form = PhoneForm(request.POST)
-        if phone_form.is_valid() and phone_form.has_changed():
-            input_phone = phone_form.cleaned_data['phone']
-            if not Phone.objects.filter(phone=input_phone,
-                                        contact_id=contact_id).first():
-                current_phone.phone = input_phone
-                current_phone.save()
-                messages.success(request, "Номер изменен")
-                logger.info(f"Сохранение данных контакта {contact_id} \
-пользователя {user_id}")
-                return redirect('show_contact', user_id=user_id, contact_id=contact_id)
-            else:
-                logger.debug(f"Ошибка сохранения данных контакта пользователя \
-{user_id} - дублирование телефона")
-                messages.error(request, "E-mail пользователя уже существует")
-        else:
-            logger.debug(f"Ошибка сохранения данных контакта пользователя {user_id}")
-            messages.error(request, "Необходимо ввести номер телефона")
-    else:
-        phone_form = PhoneForm()
-    context = {'form': phone_form,
-               'title': f'Телефон {phone_id}',
-               'user_id': user_id,
-               'contact_id': contact_id,
-               'change_pk': phone_id,
-               'change_note': 'change_phone',
-               'note': 'телефон',
-               'del_note': 'del_phone',
-               'menu': menu}
-    return render(request, 'contacts_app/edit_contact_data.html', context=context)
+def change_email(request: HttpResponse, user_id: int,
+                 contact_id: int, email_id: int) -> Callable:
+    return change_phone_or_email(request, user_id, contact_id,
+                                 email_id, Email, EmailForm, 'email',
+                                 'E-mail', "E-mail изменен",
+                                 "E-mail пользователя уже существует")
 
 
 @check_authorization
-def del_email(request, user_id, contact_id, email_id):
+def change_phone(request: HttpResponse, user_id: int,
+                 contact_id: int, phone_id: int) -> Callable:
+    return change_phone_or_email(request, user_id, contact_id,
+                                 phone_id, Phone, PhoneForm, 'phone',
+                                 'Телефон', "Номер телефона изменен",
+                                 "Номер телефона пользователя уже существует")
+
+
+def del_phone_or_email(request: HttpResponse,
+                       user_id: int, contact_id: int,
+                       instance_id: int, kind: str, entity:models.Model):
     try:
-        Email.objects.filter(pk=email_id).delete()
-        logger.info(f"Удален e-mail {email_id} контакта {contact_id} \
+        entity.objects.filter(pk=instance_id).delete()
+        logger.info(f"Удален {kind} {instance_id} контакта {contact_id} \
 пользователя {user_id}")
         messages.success(request, "Данные контакта успешно удалены")
     except:
-        logger.debug(f"Ошибка удаления e-mail {email_id} контакта {contact_id} \
-пользователя {user_id}")
+        logger.debug(f"Ошибка удаления {kind} {instance_id} контакта \
+{contact_id} пользователя {user_id}")
         messages.error(request, "Данных не сущствует")
     finally:
         return redirect('show_contact', user_id=user_id, contact_id=contact_id)
 
 
 @check_authorization
-def del_phone(request, user_id, contact_id, phone_id):
-    try:
-        Phone.objects.filter(pk=phone_id).delete()
-        logger.info(f"Удален телефон {phone_id} контакта {contact_id} \
-пользователя {user_id}")
-        messages.success(request, "Данные контакта успешно удалены")
-    except:
-        logger.debug(f"Ошибка удаления телефона {phone_id} контакта {contact_id} \
-пользователя {user_id}")
-        messages.error(request, "Данных не сущствует")
-    finally:
-        return redirect('show_contact', user_id=user_id, contact_id=contact_id)
+def del_email(request: HttpResponse, user_id: int,
+                 contact_id: int, email_id: int) -> Callable:
+    return del_phone_or_email(request, user_id, contact_id,
+                              email_id, 'E-mail', Email)
 
 
 @check_authorization
-def change_contact(request, user_id, contact_id):
+def del_phone(request: HttpResponse, user_id: int,
+                 contact_id: int, phone_id: int) -> Callable:
+    return del_phone_or_email(request, user_id, contact_id,
+                              phone_id, 'Номер телефона', Phone)
+
+@check_authorization
+def change_contact(request: HttpResponse, user_id: int, contact_id: int) -> HttpResponse:
     current_contact = Contact.objects.filter(pk=contact_id).first()
     if request.method == 'POST':
         form = ContactForm(request.POST)
@@ -290,7 +265,7 @@ def change_contact(request, user_id, contact_id):
 
 
 @check_authorization
-def del_contact(request, user_id, contact_id):
+def del_contact(request: HttpResponse, user_id: int, contact_id: int) -> HttpResponse:
     try:
         Contact.objects.filter(pk=contact_id).delete()
         logger.info(f"Удалены данные контакта {contact_id} пользователя {user_id}")
