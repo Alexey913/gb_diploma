@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="IbItTFuZlibu-NrXDWV0" name="Страница 1">
-        <mxGraphModel dx="1386" dy="1956" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="1003" dy="1540" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -33,7 +33,7 @@
                 <mxCell id="47" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0.25;entryY=1;entryDx=0;entryDy=0;shadow=1;strokeColor=#00FFFF;fontSize=10;" parent="1" source="31" target="33" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="31" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;Авторизация на Госуслугах&lt;br&gt;(подгрузка данных)&lt;br&gt;&lt;/font&gt;" style="html=1;shadow=0;dashed=0;shape=mxgraph.bootstrap.rrect;rSize=5;strokeColor=none;strokeWidth=1;fillColor=#33FFFF;fontColor=#000000;whiteSpace=wrap;align=center;verticalAlign=middle;spacingLeft=0;fontStyle=1;fontSize=14;spacing=5;" parent="1" vertex="1">
+                <mxCell id="31" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;Авторизация на Госуслугах&lt;br&gt;(опционально)&lt;br&gt;&lt;/font&gt;" style="html=1;shadow=0;dashed=0;shape=mxgraph.bootstrap.rrect;rSize=5;strokeColor=none;strokeWidth=1;fillColor=#33FFFF;fontColor=#000000;whiteSpace=wrap;align=center;verticalAlign=middle;spacingLeft=0;fontStyle=1;fontSize=14;spacing=5;" parent="1" vertex="1">
                     <mxGeometry x="265" y="-560" width="130" height="50" as="geometry"/>
                 </mxCell>
                 <mxCell id="56" style="edgeStyle=orthogonalEdgeStyle;html=1;shadow=1;strokeColor=#F0F0F0;fontSize=12;fontColor=#000000;" parent="1" source="33" edge="1">
@@ -66,7 +66,7 @@
                         <mxPoint x="380" y="-390.0000000000001" as="sourcePoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="46" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;Авторизация на Госуслугах&lt;br&gt;(обновление данных)&lt;br&gt;&lt;/font&gt;" style="html=1;shadow=0;dashed=0;shape=mxgraph.bootstrap.rrect;rSize=5;strokeColor=none;strokeWidth=1;fillColor=#33FFFF;fontColor=#000000;whiteSpace=wrap;align=center;verticalAlign=middle;spacingLeft=0;fontStyle=1;fontSize=14;spacing=5;" parent="1" vertex="1">
+                <mxCell id="46" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;Авторизация на Госуслугах&lt;br&gt;(опционально)&lt;br&gt;&lt;/font&gt;" style="html=1;shadow=0;dashed=0;shape=mxgraph.bootstrap.rrect;rSize=5;strokeColor=none;strokeWidth=1;fillColor=#33FFFF;fontColor=#000000;whiteSpace=wrap;align=center;verticalAlign=middle;spacingLeft=0;fontStyle=1;fontSize=14;spacing=5;" parent="1" vertex="1">
                     <mxGeometry x="265" y="-420" width="130" height="50" as="geometry"/>
                 </mxCell>
                 <mxCell id="63" style="edgeStyle=orthogonalEdgeStyle;html=1;shadow=1;strokeColor=#F0F0F0;fontSize=12;fontColor=#000000;entryX=0.005;entryY=0.452;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="54" target="64" edge="1">
@@ -131,19 +131,7 @@
                 <mxCell id="61" value="&lt;div style=&quot;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;6. Контакты&lt;/span&gt;&lt;/div&gt;" style="html=1;shadow=0;dashed=0;shape=mxgraph.bootstrap.rrect;rSize=5;strokeColor=#1CA5B8;strokeWidth=1;fillColor=#FFFF33;fontColor=#000000;whiteSpace=wrap;align=center;verticalAlign=middle;spacingLeft=0;fontStyle=1;fontSize=12;spacing=5;labelPosition=center;verticalLabelPosition=middle;" parent="1" vertex="1">
                     <mxGeometry x="570" y="-480" width="160" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="144" style="edgeStyle=orthogonalEdgeStyle;html=1;shadow=1;strokeColor=#F0F0F0;fontSize=11;fontColor=#000000;" parent="1" source="62" target="136" edge="1">
-                    <mxGeometry relative="1" as="geometry">
-                        <Array as="points">
-                            <mxPoint x="540" y="-430"/>
-                            <mxPoint x="540" y="-340"/>
-                            <mxPoint x="352" y="-340"/>
-                        </Array>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="62" value="&lt;div style=&quot;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;7. История местоположений&lt;/span&gt;&lt;/div&gt;" style="html=1;shadow=0;dashed=0;shape=mxgraph.bootstrap.rrect;rSize=5;strokeColor=#1CA5B8;strokeWidth=1;fillColor=#FFFF33;fontColor=#000000;whiteSpace=wrap;align=center;verticalAlign=middle;spacingLeft=0;fontStyle=1;fontSize=12;spacing=5;labelPosition=center;verticalLabelPosition=middle;" parent="1" vertex="1">
-                    <mxGeometry x="570" y="-450" width="160" height="40" as="geometry"/>
-                </mxCell>
-                <mxCell id="64" value="&lt;p style=&quot;font-size: 12px; font-weight: 400; text-align: center;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;&lt;b&gt;1. Данные пользователя:&lt;/b&gt;&lt;/span&gt;&lt;br&gt;&lt;/p&gt;&lt;div style=&quot;font-size: 12px; font-weight: 400;&quot;&gt;Фамилия&amp;nbsp;&lt;span style=&quot;background-color: initial;&quot;&gt;Имя&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;Отчество&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 12px; font-weight: 400;&quot;&gt;Пол&lt;/div&gt;&lt;div style=&quot;font-size: 12px; font-weight: 400;&quot;&gt;Дата рождения&lt;/div&gt;&lt;div style=&quot;font-size: 12px; font-weight: 400;&quot;&gt;Место рождения&lt;/div&gt;&lt;div style=&quot;font-size: 12px; font-weight: 400;&quot;&gt;Место регистрации&lt;/div&gt;&lt;div style=&quot;font-size: 12px; font-weight: 400;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;Семейное&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;положение&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 12px; font-weight: 400;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;Дети&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 12px; font-weight: 400;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;&lt;br&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 12px; font-weight: 400; text-align: right;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;&lt;b&gt;Изменить данные&lt;/b&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 12px; font-weight: 400; text-align: right;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;&lt;b&gt;&lt;br&gt;&lt;/b&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 12px; font-weight: 400; text-align: right;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;&lt;b&gt;Обновить данные через Госуслуги&lt;/b&gt;&lt;/span&gt;&lt;/div&gt;" style="html=1;shadow=0;dashed=0;shape=mxgraph.bootstrap.rrect;rSize=5;strokeColor=none;strokeWidth=1;fillColor=#F8F9FA;fontColor=#000000;whiteSpace=wrap;align=left;verticalAlign=middle;spacingLeft=0;fontStyle=1;fontSize=11;spacing=5;" parent="1" vertex="1">
+                <mxCell id="64" value="&lt;p style=&quot;font-size: 12px; font-weight: 400; text-align: center;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;&lt;b&gt;1. Данные пользователя:&lt;/b&gt;&lt;/span&gt;&lt;br&gt;&lt;/p&gt;&lt;div style=&quot;font-size: 12px; font-weight: 400;&quot;&gt;Фамилия&amp;nbsp;&lt;span style=&quot;background-color: initial;&quot;&gt;Имя&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;Отчество&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 12px; font-weight: 400;&quot;&gt;Пол&lt;/div&gt;&lt;div style=&quot;font-size: 12px; font-weight: 400;&quot;&gt;Дата рождения&lt;/div&gt;&lt;div style=&quot;font-size: 12px; font-weight: 400;&quot;&gt;Место рождения&lt;/div&gt;&lt;div style=&quot;font-size: 12px; font-weight: 400;&quot;&gt;Место регистрации&lt;/div&gt;&lt;div style=&quot;font-size: 12px; font-weight: 400;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;Семейное&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;положение&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 12px; font-weight: 400;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;Дети&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 12px; font-weight: 400;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;&lt;br&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 12px; font-weight: 400; text-align: right;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;&lt;b&gt;Изменить данные&lt;/b&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 12px; font-weight: 400; text-align: right;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;&lt;b&gt;&lt;br&gt;&lt;/b&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 12px; font-weight: 400; text-align: right;&quot;&gt;&lt;b style=&quot;background-color: initial;&quot;&gt;Обновить данные через Госуслуги (опционально)&lt;/b&gt;&lt;br&gt;&lt;/div&gt;" style="html=1;shadow=0;dashed=0;shape=mxgraph.bootstrap.rrect;rSize=5;strokeColor=none;strokeWidth=1;fillColor=#F8F9FA;fontColor=#000000;whiteSpace=wrap;align=left;verticalAlign=middle;spacingLeft=0;fontStyle=1;fontSize=11;spacing=5;" parent="1" vertex="1">
                     <mxGeometry x="810" y="-920" width="183" height="210" as="geometry"/>
                 </mxCell>
                 <mxCell id="65" value="&lt;p style=&quot;font-size: 12px; text-align: center; font-weight: 400;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;&lt;b&gt;2. Документы:&lt;/b&gt;&lt;/span&gt;&lt;/p&gt;" style="html=1;shadow=0;dashed=0;shape=mxgraph.bootstrap.rrect;rSize=5;strokeColor=none;strokeWidth=1;fillColor=#F8F9FA;fontColor=#000000;whiteSpace=wrap;align=left;verticalAlign=middle;spacingLeft=0;fontStyle=1;fontSize=11;spacing=5;" parent="1" vertex="1">
@@ -160,7 +148,7 @@
                 <mxCell id="90" style="edgeStyle=orthogonalEdgeStyle;html=1;shadow=1;strokeColor=#F0F0F0;fontSize=11;fontColor=#000000;" parent="1" source="67" target="88" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="67" value="&lt;p style=&quot;text-align: right; font-size: 12px; font-weight: 400;&quot;&gt;&lt;b style=&quot;background-color: initial;&quot;&gt;Обновить данные через Госуслуги&lt;/b&gt;&lt;br&gt;&lt;/p&gt;" style="html=1;shadow=0;dashed=0;shape=mxgraph.bootstrap.rrect;rSize=5;strokeColor=none;strokeWidth=1;fillColor=#F8F9FA;fontColor=#000000;whiteSpace=wrap;align=left;verticalAlign=middle;spacingLeft=0;fontStyle=1;fontSize=11;spacing=5;" parent="1" vertex="1">
+                <mxCell id="67" value="&lt;p style=&quot;text-align: right; font-size: 12px; font-weight: 400;&quot;&gt;&lt;b style=&quot;background-color: initial;&quot;&gt;Обновить данные через Госуслуги (опционально)&lt;/b&gt;&lt;br&gt;&lt;/p&gt;" style="html=1;shadow=0;dashed=0;shape=mxgraph.bootstrap.rrect;rSize=5;strokeColor=none;strokeWidth=1;fillColor=#F8F9FA;fontColor=#000000;whiteSpace=wrap;align=left;verticalAlign=middle;spacingLeft=0;fontStyle=1;fontSize=11;spacing=5;" parent="1" vertex="1">
                     <mxGeometry x="810" y="-560" width="183" height="40" as="geometry"/>
                 </mxCell>
                 <mxCell id="83" style="edgeStyle=orthogonalEdgeStyle;html=1;shadow=1;strokeColor=#F0F0F0;fontSize=11;fontColor=#000000;" parent="1" source="68" edge="1">
@@ -220,7 +208,7 @@
                 <mxCell id="75" value="&lt;p style=&quot;font-size: 12px; text-align: center; font-weight: 400;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;Транспортные средства -&amp;gt;&lt;br&gt;&lt;/span&gt;&lt;/p&gt;" style="html=1;shadow=0;dashed=0;shape=mxgraph.bootstrap.rrect;rSize=5;strokeColor=none;strokeWidth=1;fillColor=#F8F9FA;fontColor=#000000;whiteSpace=wrap;align=left;verticalAlign=middle;spacingLeft=0;fontStyle=1;fontSize=11;spacing=5;" parent="1" vertex="1">
                     <mxGeometry x="810" y="-450" width="183" height="20" as="geometry"/>
                 </mxCell>
-                <mxCell id="77" value="&lt;p style=&quot;text-align: right; font-size: 12px; font-weight: 400;&quot;&gt;&lt;b style=&quot;background-color: initial;&quot;&gt;Обновить данные через Госуслуги&lt;/b&gt;&lt;br&gt;&lt;/p&gt;" style="html=1;shadow=0;dashed=0;shape=mxgraph.bootstrap.rrect;rSize=5;strokeColor=none;strokeWidth=1;fillColor=#F8F9FA;fontColor=#000000;whiteSpace=wrap;align=left;verticalAlign=middle;spacingLeft=0;fontStyle=1;fontSize=11;spacing=5;" parent="1" vertex="1">
+                <mxCell id="77" value="&lt;p style=&quot;text-align: right; font-size: 12px; font-weight: 400;&quot;&gt;&lt;b style=&quot;background-color: initial;&quot;&gt;Обновить данные через Госуслуги (опционально)&lt;/b&gt;&lt;br&gt;&lt;/p&gt;" style="html=1;shadow=0;dashed=0;shape=mxgraph.bootstrap.rrect;rSize=5;strokeColor=none;strokeWidth=1;fillColor=#F8F9FA;fontColor=#000000;whiteSpace=wrap;align=left;verticalAlign=middle;spacingLeft=0;fontStyle=1;fontSize=11;spacing=5;" parent="1" vertex="1">
                     <mxGeometry x="810" y="-430" width="183" height="40" as="geometry"/>
                 </mxCell>
                 <mxCell id="79" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;Добавить ТС&lt;br&gt;&lt;/font&gt;" style="html=1;shadow=0;dashed=0;shape=mxgraph.bootstrap.rrect;rSize=5;strokeColor=none;strokeWidth=1;fillColor=#33FFFF;fontColor=#000000;whiteSpace=wrap;align=center;verticalAlign=middle;spacingLeft=0;fontStyle=1;fontSize=14;spacing=5;" parent="1" vertex="1">
@@ -285,7 +273,7 @@
                 <mxCell id="106" value="&lt;p style=&quot;font-size: 12px; text-align: center; font-weight: 400;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;Диплом -&amp;gt;&lt;br&gt;&lt;/span&gt;&lt;/p&gt;" style="html=1;shadow=0;dashed=0;shape=mxgraph.bootstrap.rrect;rSize=5;strokeColor=none;strokeWidth=1;fillColor=#F8F9FA;fontColor=#000000;whiteSpace=wrap;align=left;verticalAlign=middle;spacingLeft=0;fontStyle=1;fontSize=11;spacing=5;" parent="1" vertex="1">
                     <mxGeometry x="810" y="-320" width="183" height="20" as="geometry"/>
                 </mxCell>
-                <mxCell id="107" value="&lt;p style=&quot;text-align: right; font-size: 12px; font-weight: 400;&quot;&gt;&lt;b style=&quot;background-color: initial;&quot;&gt;Обновить данные через Госуслуги&lt;/b&gt;&lt;br&gt;&lt;/p&gt;" style="html=1;shadow=0;dashed=0;shape=mxgraph.bootstrap.rrect;rSize=5;strokeColor=none;strokeWidth=1;fillColor=#F8F9FA;fontColor=#000000;whiteSpace=wrap;align=left;verticalAlign=middle;spacingLeft=0;fontStyle=1;fontSize=11;spacing=5;" parent="1" vertex="1">
+                <mxCell id="107" value="&lt;p style=&quot;text-align: right; font-size: 12px; font-weight: 400;&quot;&gt;&lt;b style=&quot;background-color: initial;&quot;&gt;Обновить данные через Госуслуги (опционально)&lt;/b&gt;&lt;br&gt;&lt;/p&gt;" style="html=1;shadow=0;dashed=0;shape=mxgraph.bootstrap.rrect;rSize=5;strokeColor=none;strokeWidth=1;fillColor=#F8F9FA;fontColor=#000000;whiteSpace=wrap;align=left;verticalAlign=middle;spacingLeft=0;fontStyle=1;fontSize=11;spacing=5;" parent="1" vertex="1">
                     <mxGeometry x="810" y="-300" width="183" height="40" as="geometry"/>
                 </mxCell>
                 <mxCell id="108" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;1. Информация о документе&lt;br&gt;2. Скан документа (опционально)&lt;br&gt;3. Изменить данные&lt;br&gt;&lt;/font&gt;" style="html=1;shadow=0;dashed=0;shape=mxgraph.bootstrap.rrect;rSize=5;strokeColor=none;strokeWidth=1;fillColor=#33FFFF;fontColor=#000000;whiteSpace=wrap;align=center;verticalAlign=middle;spacingLeft=0;fontStyle=1;fontSize=14;spacing=5;" parent="1" vertex="1">
@@ -321,10 +309,10 @@
                     <mxGeometry x="810" y="-150" width="183" height="20" as="geometry"/>
                 </mxCell>
                 <mxCell id="125" value="&lt;p style=&quot;font-size: 12px; text-align: center; font-weight: 400;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;&lt;b&gt;6. Контакты&lt;/b&gt;&lt;/span&gt;&lt;/p&gt;" style="html=1;shadow=0;dashed=0;shape=mxgraph.bootstrap.rrect;rSize=5;strokeColor=none;strokeWidth=1;fillColor=#F8F9FA;fontColor=#000000;whiteSpace=wrap;align=left;verticalAlign=middle;spacingLeft=0;fontStyle=1;fontSize=11;spacing=5;" parent="1" vertex="1">
-                    <mxGeometry x="510" y="-290" width="183" height="30" as="geometry"/>
+                    <mxGeometry x="510" y="-300" width="183" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="126" value="&lt;p style=&quot;font-size: 12px; text-align: center; font-weight: 400;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;Поиск контакта&lt;br&gt;&lt;/span&gt;&lt;/p&gt;" style="html=1;shadow=0;dashed=0;shape=mxgraph.bootstrap.rrect;rSize=5;strokeColor=none;strokeWidth=1;fillColor=#CCFFFF;fontColor=#000000;whiteSpace=wrap;align=left;verticalAlign=middle;spacingLeft=0;fontStyle=1;fontSize=11;spacing=5;" parent="1" vertex="1">
-                    <mxGeometry x="510" y="-260" width="183" height="20" as="geometry"/>
+                    <mxGeometry x="510" y="-270" width="183" height="20" as="geometry"/>
                 </mxCell>
                 <mxCell id="132" style="edgeStyle=orthogonalEdgeStyle;html=1;shadow=1;strokeColor=#F0F0F0;fontSize=11;fontColor=#000000;entryX=0.998;entryY=0.521;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="127" target="129" edge="1">
                     <mxGeometry relative="1" as="geometry">
@@ -353,41 +341,8 @@
                 <mxCell id="129" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;1. Информация о контакте&lt;br&gt;2. Изменить контакт&lt;br&gt;3. Удалить контакт&lt;br&gt;&lt;/font&gt;" style="html=1;shadow=0;dashed=0;shape=mxgraph.bootstrap.rrect;rSize=5;strokeColor=none;strokeWidth=1;fillColor=#33FFFF;fontColor=#000000;whiteSpace=wrap;align=center;verticalAlign=middle;spacingLeft=0;fontStyle=1;fontSize=14;spacing=5;" parent="1" vertex="1">
                     <mxGeometry x="510" y="-137.5" width="150" height="65" as="geometry"/>
                 </mxCell>
-                <mxCell id="134" value="Импортировать контакты" style="html=1;shadow=0;dashed=0;shape=mxgraph.bootstrap.rrect;rSize=5;strokeColor=none;strokeWidth=1;fillColor=#FFFF99;fontColor=#000000;whiteSpace=wrap;align=left;verticalAlign=middle;spacingLeft=0;fontStyle=1;fontSize=11;spacing=5;" parent="1" vertex="1">
-                    <mxGeometry x="510" y="-240" width="183" height="20" as="geometry"/>
-                </mxCell>
-                <mxCell id="136" value="&lt;p style=&quot;font-size: 12px; text-align: center; font-weight: 400;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;&lt;b&gt;7. История местоположений&lt;/b&gt;&lt;/span&gt;&lt;/p&gt;" style="html=1;shadow=0;dashed=0;shape=mxgraph.bootstrap.rrect;rSize=5;strokeColor=none;strokeWidth=1;fillColor=#F8F9FA;fontColor=#000000;whiteSpace=wrap;align=left;verticalAlign=middle;spacingLeft=0;fontStyle=1;fontSize=11;spacing=5;" parent="1" vertex="1">
-                    <mxGeometry x="260" y="-288.75" width="183" height="30" as="geometry"/>
-                </mxCell>
-                <mxCell id="137" value="&lt;p style=&quot;font-size: 12px; text-align: center; font-weight: 400;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;Поиск по дате или месту&lt;br&gt;&lt;/span&gt;&lt;/p&gt;" style="html=1;shadow=0;dashed=0;shape=mxgraph.bootstrap.rrect;rSize=5;strokeColor=none;strokeWidth=1;fillColor=#CCFFFF;fontColor=#000000;whiteSpace=wrap;align=left;verticalAlign=middle;spacingLeft=0;fontStyle=1;fontSize=11;spacing=5;" parent="1" vertex="1">
-                    <mxGeometry x="260" y="-258.75" width="183" height="20" as="geometry"/>
-                </mxCell>
-                <mxCell id="138" style="edgeStyle=orthogonalEdgeStyle;html=1;shadow=1;strokeColor=#F0F0F0;fontSize=11;fontColor=#000000;entryX=0.998;entryY=0.521;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="139" target="142" edge="1">
-                    <mxGeometry relative="1" as="geometry">
-                        <mxPoint x="413" y="-148.75" as="targetPoint"/>
-                        <Array as="points">
-                            <mxPoint x="463" y="-228.75"/>
-                            <mxPoint x="463" y="-123.75"/>
-                            <mxPoint x="413" y="-123.75"/>
-                            <mxPoint x="413" y="-122.75"/>
-                        </Array>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="139" value="&lt;p style=&quot;font-size: 12px; text-align: center; font-weight: 400;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;Точка 1&lt;br&gt;&lt;/span&gt;&lt;/p&gt;" style="html=1;shadow=0;dashed=0;shape=mxgraph.bootstrap.rrect;rSize=5;strokeColor=none;strokeWidth=1;fillColor=#F8F9FA;fontColor=#000000;whiteSpace=wrap;align=left;verticalAlign=middle;spacingLeft=0;fontStyle=1;fontSize=11;spacing=5;" parent="1" vertex="1">
-                    <mxGeometry x="260" y="-238.75" width="183" height="20" as="geometry"/>
-                </mxCell>
-                <mxCell id="140" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0.996;entryY=0.299;entryDx=0;entryDy=0;entryPerimeter=0;shadow=1;strokeColor=#F0F0F0;fontSize=11;fontColor=#000000;" parent="1" source="141" target="142" edge="1">
-                    <mxGeometry relative="1" as="geometry">
-                        <Array as="points">
-                            <mxPoint x="433" y="-136.75"/>
-                        </Array>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="141" value="&lt;p style=&quot;font-size: 12px; text-align: center; font-weight: 400;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;Точка 2&lt;br&gt;&lt;/span&gt;&lt;/p&gt;" style="html=1;shadow=0;dashed=0;shape=mxgraph.bootstrap.rrect;rSize=5;strokeColor=none;strokeWidth=1;fillColor=#F8F9FA;fontColor=#000000;whiteSpace=wrap;align=left;verticalAlign=middle;spacingLeft=0;fontStyle=1;fontSize=11;spacing=5;" parent="1" vertex="1">
-                    <mxGeometry x="260" y="-218.75" width="183" height="20" as="geometry"/>
-                </mxCell>
-                <mxCell id="142" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;1. Информация о местоположении и времени&lt;br&gt;2. Удалить точку&lt;br&gt;&lt;/font&gt;" style="html=1;shadow=0;dashed=0;shape=mxgraph.bootstrap.rrect;rSize=5;strokeColor=none;strokeWidth=1;fillColor=#33FFFF;fontColor=#000000;whiteSpace=wrap;align=center;verticalAlign=middle;spacingLeft=0;fontStyle=1;fontSize=14;spacing=5;" parent="1" vertex="1">
-                    <mxGeometry x="260" y="-156.25" width="150" height="65" as="geometry"/>
+                <mxCell id="134" value="Импортировать контакты (опционально)" style="html=1;shadow=0;dashed=0;shape=mxgraph.bootstrap.rrect;rSize=5;strokeColor=none;strokeWidth=1;fillColor=#FFFF99;fontColor=#000000;whiteSpace=wrap;align=left;verticalAlign=middle;spacingLeft=0;fontStyle=1;fontSize=11;spacing=5;" parent="1" vertex="1">
+                    <mxGeometry x="510" y="-250" width="183" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="145" value="&lt;font style=&quot;font-size: 24px;&quot;&gt;UI-диаграмма приложения-помощника&lt;/font&gt;" style="html=1;shadow=0;dashed=0;shape=mxgraph.bootstrap.rrect;rSize=5;strokeColor=none;strokeWidth=1;fillColor=#6C767D;fontColor=#FFFFFF;whiteSpace=wrap;align=left;verticalAlign=middle;spacingLeft=10;fontStyle=1;fontSize=18;" parent="1" vertex="1">
                     <mxGeometry x="580" y="-1060" width="490" height="40" as="geometry"/>
