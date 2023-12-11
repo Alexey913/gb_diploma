@@ -42,7 +42,7 @@ def education(request, user_id):
                                'title': 'Данные об образовании',
                                'user_id': user_id,
                                'menu': menu}
-        return render(request, 'show_diplomas.html', context=context)
+        return render(request, 'eduction_app/show_diplomas.html', context=context)
     return redirect('edit_diploma', user_id=user_id)
 
 

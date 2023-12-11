@@ -44936,3 +44936,159 @@ INFO 2023-12-07 23:17:49,998 autoreload 5400 2412 Watching for file changes with
 INFO 2023-12-07 23:17:55,636 basehttp 5400 12132 "GET /reminds/1/?search_box=%D0%9D%D0%B0%D0%BF%D0%BE%D0%BC%D0%B8%D0%BD%D0%B0%D0%BD%D0%B8%D0%B5 HTTP/1.1" 200 6590
 INFO 2023-12-07 23:17:58,269 basehttp 5400 12132 "GET /reminds/1/?search_box=%D0%9E%D0%BF%D0%B8%D1%81%D0%B0%D0%BD%D0%B8%D0%B5 HTTP/1.1" 200 6590
 INFO 2023-12-07 23:18:01,547 basehttp 5400 12132 "GET /reminds/1/?search_box=%D0%9D%D0%B0%D0%BF%D0%BE%D0%BC%D0%B8%D0%BD%D0%B0%D0%BD%D0%B8%D0%B5 HTTP/1.1" 200 6590
+INFO 2023-12-09 22:54:15,318 autoreload 3416 9452 Watching for file changes with StatReloader
+INFO 2023-12-09 22:55:32,914 autoreload 7944 11364 Watching for file changes with StatReloader
+INFO 2023-12-09 22:56:24,147 autoreload 13036 5064 Watching for file changes with StatReloader
+INFO 2023-12-09 22:57:30,086 autoreload 13036 5064 C:\Alex\Python\diploming\diploma\virtual_office\virtual_office\settings.py changed, reloading.
+INFO 2023-12-09 22:57:58,071 autoreload 8080 11904 Watching for file changes with StatReloader
+INFO 2023-12-09 22:58:20,500 basehttp 8080 996 "GET / HTTP/1.1" 302 0
+INFO 2023-12-09 22:58:21,001 basehttp 8080 996 "GET /authorization/ HTTP/1.1" 200 3652
+WARNING 2023-12-09 22:58:21,693 log 8080 996 Not Found: /favicon.ico
+WARNING 2023-12-09 22:58:21,698 basehttp 8080 996 "GET /favicon.ico HTTP/1.1" 404 3737
+INFO 2023-12-09 22:59:08,443 basehttp 8080 10376 "GET / HTTP/1.1" 302 0
+INFO 2023-12-09 22:59:08,526 basehttp 8080 10376 "GET /authorization/ HTTP/1.1" 200 3652
+WARNING 2023-12-09 22:59:08,922 log 8080 10376 Not Found: /favicon.ico
+WARNING 2023-12-09 22:59:08,927 basehttp 8080 10376 "GET /favicon.ico HTTP/1.1" 404 3737
+INFO 2023-12-09 22:59:20,176 basehttp 8080 996 "GET /registration/ HTTP/1.1" 200 4664
+INFO 2023-12-09 22:59:47,305 basehttp 8080 996 "GET /authorization/ HTTP/1.1" 200 3250
+INFO 2023-12-09 22:59:58,988 basehttp 8080 996 "GET /registration/ HTTP/1.1" 200 4664
+INFO 2023-12-09 23:00:20,096 basehttp 8080 996 "POST /registration/ HTTP/1.1" 302 0
+INFO 2023-12-09 23:00:20,297 basehttp 8080 996 "GET /data/2/ HTTP/1.1" 200 4738
+INFO 2023-12-09 23:00:30,184 basehttp 8080 10376 "POST /authorization/ HTTP/1.1" 200 3806
+INFO 2023-12-09 23:01:20,324 basehttp 8080 10376 "POST /authorization/ HTTP/1.1" 302 0
+INFO 2023-12-09 23:01:20,479 basehttp 8080 10376 "GET /data/2/ HTTP/1.1" 200 4366
+INFO 2023-12-09 23:01:28,082 basehttp 8080 996 "GET /logout/ HTTP/1.1" 302 0
+INFO 2023-12-09 23:01:28,109 basehttp 8080 996 "GET /authorization/ HTTP/1.1" 200 3250
+INFO 2023-12-09 23:01:50,915 basehttp 8080 996 "POST /authorization/ HTTP/1.1" 200 3636
+INFO 2023-12-09 23:01:51,658 basehttp 8080 10376 "GET /property/2/ HTTP/1.1" 200 4379
+INFO 2023-12-09 23:01:56,464 basehttp 8080 10376 "GET /doc/2/ HTTP/1.1" 200 5036
+INFO 2023-12-09 23:01:59,131 basehttp 8080 996 "POST /authorization/ HTTP/1.1" 200 3636
+DEBUG 2023-12-09 23:02:26,367 views 8080 10376 Паспорт пользователя 2 не создан - попытка ввода данных о супруге
+INFO 2023-12-09 23:02:26,390 basehttp 8080 10376 "GET /doc/passport/2/ HTTP/1.1" 302 0
+INFO 2023-12-09 23:02:26,502 basehttp 8080 10376 "GET /doc/change_passport/2/ HTTP/1.1" 200 9142
+INFO 2023-12-09 23:03:29,471 views 8080 10376 Сохранение паспортных данных пользователя 2
+INFO 2023-12-09 23:03:29,553 basehttp 8080 10376 "POST /doc/change_passport/2/ HTTP/1.1" 302 0
+ERROR 2023-12-09 23:03:30,013 log 8080 10376 Internal Server Error: /doc/passport/2/
+Traceback (most recent call last):
+  File "C:\Alex\Python\diploming\diploma\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Alex\Python\diploming\diploma\venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Alex\Python\diploming\diploma\virtual_office\abstract_app\views.py", line 94, in wrapper
+    return func(request, user_id, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Alex\Python\diploming\diploma\virtual_office\doc_app\views.py", line 99, in get_passport
+    return render(request, 'passport.html', context=context_to_template)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Alex\Python\diploming\diploma\venv\Lib\site-packages\django\shortcuts.py", line 24, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Alex\Python\diploming\diploma\venv\Lib\site-packages\django\template\loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Alex\Python\diploming\diploma\venv\Lib\site-packages\django\template\loader.py", line 19, in get_template
+    raise TemplateDoesNotExist(template_name, chain=chain)
+django.template.exceptions.TemplateDoesNotExist: passport.html
+ERROR 2023-12-09 23:03:30,095 basehttp 8080 10376 "GET /doc/passport/2/ HTTP/1.1" 500 93864
+INFO 2023-12-09 23:04:17,577 views 8080 9968 Сохранение паспортных данных пользователя 2
+INFO 2023-12-09 23:04:17,592 basehttp 8080 9968 "POST /doc/change_passport/2/ HTTP/1.1" 302 0
+ERROR 2023-12-09 23:04:17,708 log 8080 9968 Internal Server Error: /doc/passport/2/
+Traceback (most recent call last):
+  File "C:\Alex\Python\diploming\diploma\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Alex\Python\diploming\diploma\venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Alex\Python\diploming\diploma\virtual_office\abstract_app\views.py", line 94, in wrapper
+    return func(request, user_id, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Alex\Python\diploming\diploma\virtual_office\doc_app\views.py", line 99, in get_passport
+    return render(request, 'passport.html', context=context_to_template)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Alex\Python\diploming\diploma\venv\Lib\site-packages\django\shortcuts.py", line 24, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Alex\Python\diploming\diploma\venv\Lib\site-packages\django\template\loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Alex\Python\diploming\diploma\venv\Lib\site-packages\django\template\loader.py", line 19, in get_template
+    raise TemplateDoesNotExist(template_name, chain=chain)
+django.template.exceptions.TemplateDoesNotExist: passport.html
+ERROR 2023-12-09 23:04:17,719 basehttp 8080 9968 "GET /doc/passport/2/ HTTP/1.1" 500 93864
+INFO 2023-12-09 23:05:19,770 autoreload 8080 11904 C:\Alex\Python\diploming\diploma\virtual_office\doc_app\views.py changed, reloading.
+INFO 2023-12-09 23:05:27,984 autoreload 3088 2600 Watching for file changes with StatReloader
+INFO 2023-12-09 23:05:30,903 views 3088 10960 Сохранение паспортных данных пользователя 2
+INFO 2023-12-09 23:05:30,937 basehttp 3088 10960 "POST /doc/change_passport/2/ HTTP/1.1" 302 0
+INFO 2023-12-09 23:05:31,183 basehttp 3088 10960 "GET /doc/passport/2/ HTTP/1.1" 200 5943
+INFO 2023-12-09 23:05:53,440 basehttp 3088 10960 "GET /education/2/ HTTP/1.1" 302 0
+INFO 2023-12-09 23:05:53,592 basehttp 3088 10960 "GET /education/edit_diploma/2/ HTTP/1.1" 200 10982
+INFO 2023-12-09 23:07:36,993 basehttp 3088 10960 "POST /education/add_diploma/2/ HTTP/1.1" 302 0
+INFO 2023-12-09 23:07:37,008 basehttp 3088 10960 "GET /education/2/ HTTP/1.1" 302 0
+INFO 2023-12-09 23:07:37,174 basehttp 3088 10960 "GET /education/edit_diploma/2/ HTTP/1.1" 200 4589
+INFO 2023-12-09 23:07:58,313 basehttp 3088 10960 "GET /reminds/2/ HTTP/1.1" 200 6590
+INFO 2023-12-09 23:08:31,098 basehttp 3088 10960 "GET /contacts/2/ HTTP/1.1" 200 4073
+INFO 2023-12-09 23:08:37,364 basehttp 3088 10960 "GET /contacts/add_contact/2/ HTTP/1.1" 200 9327
+INFO 2023-12-09 23:09:29,060 basehttp 3088 10960 "POST /contacts/add_contact/2/ HTTP/1.1" 200 9840
+INFO 2023-12-09 23:09:32,379 basehttp 3088 10960 "POST /contacts/add_contact/2/ HTTP/1.1" 200 9840
+INFO 2023-12-09 23:09:45,504 basehttp 3088 10960 "POST /contacts/add_contact/2/ HTTP/1.1" 200 9840
+INFO 2023-12-09 23:09:52,526 basehttp 3088 10960 "POST /contacts/add_contact/2/ HTTP/1.1" 200 9850
+INFO 2023-12-09 23:10:05,288 basehttp 3088 10960 "POST /contacts/add_contact/2/ HTTP/1.1" 200 10029
+INFO 2023-12-09 23:10:07,572 basehttp 3088 10960 "POST /contacts/add_contact/2/ HTTP/1.1" 200 10029
+INFO 2023-12-09 23:10:37,775 basehttp 3088 10960 "GET /data/2/ HTTP/1.1" 200 4366
+INFO 2023-12-09 23:10:48,518 basehttp 3088 10960 "GET /property/2/ HTTP/1.1" 200 4379
+INFO 2023-12-09 23:11:12,067 basehttp 3088 10960 "GET /property/realty/2/ HTTP/1.1" 302 0
+INFO 2023-12-09 23:11:12,204 basehttp 3088 10960 "GET /property/edit_realty/2/ HTTP/1.1" 200 8771
+INFO 2023-12-09 23:12:25,816 basehttp 3088 10960 - Broken pipe from ('192.168.0.14', 38462)
+INFO 2023-12-09 23:12:25,859 basehttp 3088 13188 "POST /property/add_realty/2/ HTTP/1.1" 200 8998
+INFO 2023-12-09 23:13:19,384 basehttp 3088 9448 "POST /property/add_realty/2/ HTTP/1.1" 200 8998
+INFO 2023-12-09 23:13:41,753 basehttp 3088 9448 "POST /property/add_realty/2/ HTTP/1.1" 200 9045
+INFO 2023-12-09 23:13:43,442 basehttp 3088 9448 "POST /property/add_realty/2/ HTTP/1.1" 200 9045
+INFO 2023-12-09 23:14:06,185 basehttp 3088 9448 "POST /property/add_realty/2/ HTTP/1.1" 200 9067
+INFO 2023-12-09 23:14:28,236 basehttp 3088 9448 "POST /property/add_realty/2/ HTTP/1.1" 200 8998
+INFO 2023-12-09 23:16:29,287 basehttp 3088 12144 "GET /contacts/add_contact/2/ HTTP/1.1" 200 9327
+INFO 2023-12-09 23:16:31,207 basehttp 3088 12144 "GET /doc/change_passport/2/ HTTP/1.1" 200 8716
+INFO 2023-12-09 23:16:33,058 basehttp 3088 12144 "GET /authorization/ HTTP/1.1" 200 3250
+WARNING 2023-12-09 23:18:43,247 log 3088 9588 Not Found: /favicon.ico
+WARNING 2023-12-09 23:18:43,275 basehttp 3088 9588 "GET /favicon.ico HTTP/1.1" 404 3734
+INFO 2023-12-09 23:18:46,973 basehttp 3088 9588 "GET / HTTP/1.1" 302 0
+INFO 2023-12-09 23:18:47,234 basehttp 3088 9588 "GET /authorization/ HTTP/1.1" 200 3652
+INFO 2023-12-09 23:18:48,690 basehttp 3088 9588 - Broken pipe from ('127.0.0.1', 61237)
+INFO 2023-12-09 23:18:48,694 basehttp 3088 9476 - Broken pipe from ('127.0.0.1', 61236)
+INFO 2023-12-09 23:19:02,376 basehttp 3088 2156 "POST /authorization/ HTTP/1.1" 200 3632
+INFO 2023-12-09 23:19:08,708 basehttp 3088 1472 - Broken pipe from ('127.0.0.1', 61257)
+INFO 2023-12-09 23:19:08,708 basehttp 3088 2156 - Broken pipe from ('127.0.0.1', 61256)
+INFO 2023-12-09 23:19:11,209 basehttp 3088 11212 "POST /authorization/ HTTP/1.1" 200 3632
+INFO 2023-12-09 23:19:18,696 basehttp 3088 14960 - Broken pipe from ('127.0.0.1', 61265)
+INFO 2023-12-09 23:19:18,696 basehttp 3088 11212 - Broken pipe from ('127.0.0.1', 61266)
+INFO 2023-12-09 23:19:18,696 basehttp 3088 2424 - Broken pipe from ('127.0.0.1', 61267)
+INFO 2023-12-09 23:19:21,542 basehttp 3088 10084 "POST /authorization/ HTTP/1.1" 302 0
+INFO 2023-12-09 23:19:21,786 basehttp 3088 10084 "GET /data/2/ HTTP/1.1" 200 4366
+INFO 2023-12-09 23:19:26,128 basehttp 3088 10084 "GET /reminds/2/ HTTP/1.1" 200 6590
+INFO 2023-12-09 23:19:28,713 basehttp 3088 11580 - Broken pipe from ('127.0.0.1', 61278)
+INFO 2023-12-09 23:19:28,713 basehttp 3088 10084 - Broken pipe from ('127.0.0.1', 61277)
+INFO 2023-12-09 23:19:28,713 basehttp 3088 10672 - Broken pipe from ('127.0.0.1', 61276)
+INFO 2023-12-09 23:20:09,976 basehttp 3088 11468 "GET /reminds/add_remind/2/ HTTP/1.1" 200 10171
+INFO 2023-12-09 23:20:13,811 basehttp 3088 12432 - Broken pipe from ('127.0.0.1', 61305)
+INFO 2023-12-09 23:20:13,811 basehttp 3088 13732 - Broken pipe from ('127.0.0.1', 61304)
+INFO 2023-12-09 23:20:13,811 basehttp 3088 11468 - Broken pipe from ('127.0.0.1', 61303)
+INFO 2023-12-09 23:20:29,988 basehttp 3088 5852 "POST /reminds/add_remind/2/ HTTP/1.1" 302 0
+INFO 2023-12-09 23:20:30,561 basehttp 3088 5852 "GET /reminds/show_remind/2/3015/ HTTP/1.1" 200 7811
+INFO 2023-12-09 23:20:38,889 basehttp 3088 5852 - Broken pipe from ('127.0.0.1', 61316)
+INFO 2023-12-09 23:20:38,889 basehttp 3088 11724 - Broken pipe from ('127.0.0.1', 61318)
+INFO 2023-12-09 23:21:20,996 basehttp 3088 11412 "GET /reminds/change_remind/2/3015/ HTTP/1.1" 200 12733
+INFO 2023-12-09 23:21:28,895 basehttp 3088 7344 - Broken pipe from ('127.0.0.1', 61353)
+INFO 2023-12-09 23:21:39,778 basehttp 3088 12120 "POST /reminds/change_remind/2/3015/ HTTP/1.1" 302 0
+INFO 2023-12-09 23:21:39,831 basehttp 3088 12120 "GET /reminds/show_remind/2/3015/ HTTP/1.1" 200 7835
+INFO 2023-12-09 23:21:49,033 basehttp 3088 12120 - Broken pipe from ('127.0.0.1', 61362)
+INFO 2023-12-09 23:21:49,038 basehttp 3088 7884 - Broken pipe from ('127.0.0.1', 61361)
+INFO 2023-12-09 23:21:49,038 basehttp 3088 14036 - Broken pipe from ('127.0.0.1', 61363)
+INFO 2023-12-09 23:22:25,380 basehttp 3088 13756 "GET /reminds/2/ HTTP/1.1" 200 6590
+INFO 2023-12-09 23:22:28,982 basehttp 3088 8988 - Broken pipe from ('127.0.0.1', 61375)
+INFO 2023-12-09 23:22:28,983 basehttp 3088 13756 - Broken pipe from ('127.0.0.1', 61374)
+INFO 2023-12-09 23:22:28,983 basehttp 3088 14004 - Broken pipe from ('127.0.0.1', 61376)
+INFO 2023-12-09 23:22:36,317 basehttp 3088 2752 "GET /reminds/2/?search_box=%D0%9D%D0%B0%D0%BF%D0%BE%D0%BC%D0%B8%D0%BD%D0%B0%D0%BD%D0%B8%D0%B5 HTTP/1.1" 200 6590
+INFO 2023-12-09 23:22:38,993 basehttp 3088 3900 - Broken pipe from ('127.0.0.1', 61386)
+INFO 2023-12-09 23:22:38,998 basehttp 3088 2752 - Broken pipe from ('127.0.0.1', 61385)

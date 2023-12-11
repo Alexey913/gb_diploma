@@ -42,7 +42,7 @@ def get_realty(request, user_id):
         context = {'properties': properties,
                    'title': 'Данные о недвижимости',
                    'user_id': user_id, 'menu': menu}
-        return render(request, 'show_property.html', context=context)
+        return render(request, 'property_app/show_property.html', context=context)
     return redirect('edit_realty', user_id=user_id)
 
 
@@ -168,7 +168,7 @@ def get_transport(request, user_id):
         context = {'properties': properties,
                    'title': 'Данные о транспорте',
                    'user_id': user_id, 'menu': menu}
-        return render(request, 'show_property.html', context=context)
+        return render(request, 'property_app/show_property.html', context=context)
     return redirect('edit_transport', user_id=user_id)
 
 

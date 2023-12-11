@@ -205,13 +205,13 @@ def func_for_add_repeat_events(remind, func, delta, period):
     current_day = remind.date
     end_date=datetime(year=end_date_year-delta, month=1, day=1)
     for dt in rrule.rrule(func, dtstart=current_day, until=end_date):
-            Remind.objects.create(title=remind.title,
-                                    date=dt, time=remind.time,
-                                    all_day=remind.all_day,
-                                    repeat=period,
-                                    description=remind.description,
-                                    user = remind.user,
-                                    repeat_id=remind.pk)
+            Remind.objects.bulk_create(title=remind.title,
+                                        date=dt, time=remind.time,
+                                        all_day=remind.all_day,
+                                        repeat=period,
+                                        description=remind.description,
+                                        user = remind.user,
+                                        repeat_id=remind.pk)
 
 
 def add_event_with_repeat(remind:Remind):

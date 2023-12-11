@@ -96,7 +96,7 @@ def get_passport(request, user_id):
                                'title': 'Данные пользователя',
                                'user_id': user_id,
                                'menu': menu}
-        return render(request, 'passport.html', context=context_to_template)
+        return render(request, 'doc_app/passport.html', context=context_to_template)
     logger.debug(f"Паспорт пользователя {user_id} не создан - \
 попытка ввода данных о супруге")
     messages.error(request,
@@ -346,7 +346,7 @@ def get_inn(request, user_id):
                                'user_id': user_id,
                                'view': 'change_inn',
                                'menu': menu}
-        return render(request, 'base_doc.html', context=context_to_template)
+        return render(request, 'doc_app/base_doc.html', context=context_to_template)
     logger.debug(f"ИНН пользователя {user_id} не существует")
     messages.error(request,
                    'Для работы с ИНН необходимо ввести данные ФНС')
@@ -421,7 +421,7 @@ def get_snils(request, user_id):
                                'user_id': user_id,
                                'view': 'change_snils',
                                'menu': menu}
-        return render(request, 'base_doc.html', context=context_to_template)
+        return render(request, 'doc_app/base_doc.html', context=context_to_template)
     logger.debug(f"СНИЛС пользователя {user_id} не существует")
     messages.error(request,
                    'Для работы со СНИЛС необходимо ввести данные')
@@ -607,7 +607,7 @@ def get_driver_license(request, user_id):
                                'view': 'change_driver_license',
                                'user_id': user_id,
                                'menu': menu}
-        return render(request, 'driver_license.html', context=context_to_template)
+        return render(request, 'doc_app/driver_license.html', context=context_to_template)
     logger.debug(f"Водительское удостоверение пользователя {user_id} не создано - \
 ВУ еще не создано")
     messages.error(request,
@@ -695,7 +695,7 @@ def get_foreign_passport(request, user_id):
                                'view': 'change_foreign_passport',
                                'user_id': user_id,
                                'menu': menu}
-        return render(request, 'base_doc.html', context=context_to_template)
+        return render(request, 'doc_app/base_doc.html', context=context_to_template)
     logger.debug(f"Заграничный паспорт пользователя {user_id} не создан - \
 ошибка ввода данных")
     messages.error(request,
@@ -781,7 +781,7 @@ def get_military_ticket(request, user_id):
                                'view': 'change_military_ticket',
                                'user_id': user_id,
                                'menu': menu}
-        return render(request, 'base_doc.html', context=context_to_template)
+        return render(request, 'doc_app/base_doc.html', context=context_to_template)
     logger.debug(f"Военный билет пользователя {user_id} не создан - \
 ошибка ввода данных")
     messages.error(request,

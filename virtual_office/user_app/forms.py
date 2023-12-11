@@ -22,10 +22,12 @@ def check_phone_email(input_data: str) -> bool:
 class UserFormAuth(forms.Form):
     phone_email = forms.CharField(max_length=50, min_length=6, label='Телефон / E-mail',
                                   error_messages={'required': 'Обязательно введите телефон или e-mail'},
-                                  widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Телефон или e-mail'}))
+                                  widget=forms.TextInput(attrs={
+                                      'class': 'form-control', 'placeholder': 'Телефон или e-mail'}))
 
     password = forms.CharField(max_length=50, min_length=6, label='Пароль',
-                               widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Пароль'}))
+                               widget=forms.PasswordInput(attrs={
+                                   'class': 'form-control', 'placeholder': 'Пароль'}))
 
     def clean_phone_email(self):
         phone_email: str = self.cleaned_data['phone_email']

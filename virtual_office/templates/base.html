@@ -93,7 +93,9 @@
             </tr>
             <tr border="1" class="gradient_footer" height="20%">
                 <td colspan="3">
-                    <h3 align = "right">Информация</h3>
+                    {% block footer %}
+                        <h3 align = "right">Информация</h3>
+                    {% endblock %}
                 </td>
             </tr>
         </table>
