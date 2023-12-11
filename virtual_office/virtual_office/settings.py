@@ -32,7 +32,7 @@ ALLOWED_HOSTS = ['0.0.0.0',
                  '192.168.0.108',
                  '192.168.0.13']
 
-INTERNAL_IPS = ['127.0.0.1',]
+# INTERNAL_IPS = ['127.0.0.1',]
 
 # Application definition
 
@@ -50,11 +50,11 @@ INSTALLED_APPS = [
     'education_app',
     'planning_app',
     'contacts_app',
-    'debug_toolbar'
+    # 'debug_toolbar',
 ]
 
 MIDDLEWARE = [
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',

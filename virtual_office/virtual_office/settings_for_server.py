@@ -45,8 +45,6 @@ ALLOWED_HOSTS = ['0.0.0.0',
                  '192.168.0.13'
                  'al913.pythonanywhere.com',]
 
-INTERNAL_IPS = ['127.0.0.1',]
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -67,7 +65,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -113,8 +111,15 @@ WSGI_APPLICATION = 'virtual_office.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'al913$default',
+        'USER': 'al913',
+        'PASSWORD': os.getenv('MYSQL_PASSWORD'),
+        'HOST': 'al913.mysql.pythonanywhere-services.com',
+        'OPTIONS': {
+            'init_command': "SET NAMES 'utf8mb4';SET sql_mode='STRICT_TRANS_TABLES'",
+            'charset': 'utf8mb4',
+        },
     }
 }
 
