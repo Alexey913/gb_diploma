@@ -8,8 +8,7 @@
             {% for pr in properties %}
                 <tr>
                     <td align="left" width="200">
-                        {{ pr.pk }}
-                        <a href="{% url change_property user_id 1 %}">
+                        <a href="{% url get_property user_id pr.pk %}">
                             {{ pr.type_property }}:
                             {% if pr.area %} 
                                 площадь {{ pr.area }} кв.м.

@@ -26,14 +26,12 @@ class Diploma(DiplomaTemplate):
                                               verbose_name='Регистрационный номер')
     name_institution = models.CharField(max_length=100,
                                         verbose_name='Название учебного заведения')
-    year_of_start_edu = models.CharField(max_length=4,
-                                         null=True,
-                                         blank=True,
-                                         verbose_name='Год начала обучения')
-    year_of_finish_edu = models.CharField(max_length=4,
-                                          null=True,
-                                          blank=True,
-                                          verbose_name='Год окончания обучения')
+    year_of_start_edu = models.IntegerField(null=True,
+                                            blank=True,
+                                            verbose_name='Год начала обучения')
+    year_of_finish_edu = models.IntegerField(null=True,
+                                            blank=True,
+                                            verbose_name='Год окончания обучения')
     spiciality = models.CharField(max_length=100,
                                   null=True,
                                   blank=True,

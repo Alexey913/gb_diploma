@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block content %}
+
+
+    <div><h1>{{ title }}</h1></div>
+    <div>
+        <table cellpadding="3">
+            {% for k, v in properties.items %}
+                <tr>
+                    <td align="left" width="200">
+                        {{ k }}:
+                    </td>
+                    <td align="left" width="200">
+                        {{ v }}
+                    </td>
+                </tr>
+            {% endfor %}
+            <tr>
+                <td>
+                    <a href="{% url change_property user_id property_id %}">Изменить данные</a>
+                    <br><br>
+                    <a href="{% url del_property user_id property_id %}"> Удалить сведения об объекте собственности </a>
+                    <br><br>
+                    <a href="{% url add_property user_id %}"> Добавить {{ title }} </a>
+                </td>
+            </tr>
+        </table>
+        <br>
+</div>
+
+{% endblock %}

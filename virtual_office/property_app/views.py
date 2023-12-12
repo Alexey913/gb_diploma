@@ -14,6 +14,7 @@ from .forms import TransportForm, RealtyForm
 
 logger = logging.getLogger(__name__)
 
+
 @check_authorization
 def get_properties(request: HttpResponse, user_id: int) -> HttpResponse:
     context = {'title': 'Документы',
@@ -23,102 +24,34 @@ def get_properties(request: HttpResponse, user_id: int) -> HttpResponse:
     return render(request, 'property_app/property.html', context=context)
 
 
-
-def show_property(user_id: int, entity: models.Model, list_fields: list) -> dict:
+def show_list_property(request: HttpResponse, user_id: int, kind: str,
+                       entity: models.Model, title: str) -> HttpResponse:
     properties = entity.objects.filter(user_id=user_id).all()
     if properties:
-        output_property = []
-        for item in properties:
-            prop_instance = entity.objects.values(*list_fields).filter(pk=item.pk).first()
-            object_property = get_object_or_404(entity, pk=item.pk)
-            output_property.append(get_data_with_verbose_name(object_property, prop_instance))
-        return output_property
+        context = {'title': title,
+                'user_id': user_id,
+                'properties': properties,
+                'menu': menu,
+                'add_property': 'add_'+kind,
+                'get_property': 'get_'+kind}
+        return render(request, 'property_app/show_list_property.html', context=context)
+    logger.debug(f"Нет данных по разделу {title} пользователя {user_id} - \
+# переход к добавлению объекта в {title}")
+    messages.error(request, f'Раздел {title} пуст. Добавьте {title}')
+    if kind == 'transport':
+        return add_transport(request, user_id)
+    return add_realty(request, user_id)
+    
 
-
-def get_property(request: HttpResponse, user_id: int,
-                 entity: models.Model, list_fields: list,
-                 kind: str, in_title: str) -> HttpResponse:
-    properties = show_property(user_id, entity, list_fields)
-    if properties:
-        context = {'properties': properties,
-                   'title': f'Данные о {in_title}',
-                   'user_id': user_id, 'menu': menu,
-                   'add_property':'add_'+kind,
-                   'change_property': 'change_'+kind}
-        return render(request, 'property_app/show_property.html', context=context)
-    return redirect('edit_'+kind, user_id=user_id)
+@check_authorization
+def show_list_realty(request: HttpResponse, user_id: int) -> HttpResponse:
+    return show_list_property(request, user_id, 'realty', Realty, 'Недвижимость')
 
 
 @check_authorization
-def get_realty(request:HttpResponse, user_id: int) -> Callable:
-    list_fields = ['type_property', 'cadastral_number', 'cadastral_cost',
-                   'adress', 'area', 'date_registration', 'description']
-    return get_property(request, user_id, Realty, list_fields, 'realty', "недвижимости")
-
-
-@check_authorization
-def get_transport(request:HttpResponse, user_id: int) -> Callable:
-    list_fields = ['type_property', 'brand', 'model', 'year_release',
-                   'power_engine', 'registration_number', 'weigth',
-                   'carrying', 'date_registration', 'description',]
-    return get_property(request, user_id, Transport, list_fields, 'transport', "транспорте")
-
-
-def check_property(user_id: int, entity: models.Model) -> bool:
-    if entity.objects.filter(user_id=user_id).first():
-        return True
-    return False
-
-def edit_property(request: HttpResponse, user_id: int,
-                  entity: models.Model,
-                  in_title:str, kind: str) -> Callable:
-    if not check_property(user_id, entity):
-        logger.debug(f"Нет данных о '{in_title}' пользователя {user_id} - \
-переход к заполнению данных")
-        messages.error(request,
-        f'Нет сведений о {in_title} пользователя. Введите необходимые данные')
-        if kind == 'realty':
-            return add_transport(request, user_id)
-        return add_realty(request, user_id)
-    if kind =='realty':
-        return show_realty_for_change(request, user_id)
-    return show_transport_for_change(request, user_id)
-
-
-@check_authorization
-def edit_realty(request: HttpResponse, user_id: int) -> Callable:
-    return edit_property(request, user_id, Realty,
-                         'недвижимости', 'realty')
-
-
-@check_authorization
-def edit_transport(request: HttpResponse, user_id: int) -> Callable:
-    return edit_property(request, user_id, Transport,
-                         'транспорте', 'transport', 'Транспорт')
-
-@check_authorization
-def show_property_for_change(request: HttpResponse, user_id: int,
-                             entity: models.Model, kind: str,
-                             title: str) -> HttpResponse:
-    properties = entity.objects.filter(user_id=user_id).all()
-    context = {'property': properties,
-               'title': title,
-               'user_id': user_id,
-               'change_property': 'change_'+kind,
-               'add_property': 'add_'+kind,
-               'menu': menu}
-    return render(request, 'property_app/show_property.html', context=context)
-
-
-
-def show_transport_for_change(request: HttpResponse, user_id: int) -> Callable:
-    return show_property_for_change(request, user_id,
-                                    Transport, 'transport', 'Транспорт')
-
-
-def show_realty_for_change(request: HttpResponse, user_id: int) -> Callable:
-    return show_property_for_change(request, user_id,
-                                    Realty, 'realty', 'Недвижимость')
+def show_list_transport(request: HttpResponse, user_id: int) -> HttpResponse:
+    return show_list_property(request, user_id, 'transport', Transport,
+                              'Транспорт')
 
 
 @check_authorization
@@ -159,90 +92,91 @@ def add_realty(request: HttpResponse, user_id: int) -> Callable:
                  'объекта недвижимости', 'realty')
 
 
+def show_property(property_id: int, entity: models.Model, list_fields: list) -> dict:
+    properties = entity.objects.filter(pk=property_id).first()
+    if properties:
+        prop_instance = entity.objects.values(*list_fields).filter(pk=property_id).first()
+        object_property = get_object_or_404(entity, pk=property_id)
+        return get_data_with_verbose_name(object_property, prop_instance)
+
+
+def get_property(request: HttpResponse, user_id: int, property_id: int,
+                 entity: models.Model, list_fields: list,
+                 kind: str, in_title: str) -> HttpResponse:
+    property_dict = show_property(property_id, entity, list_fields)
+    if property_dict:
+        context = {'properties': property_dict,
+                   'title': f'Данные о {in_title}',
+                   'user_id': user_id, 'menu': menu,
+                   'add_property':'add_'+kind,
+                   'change_property': 'change_'+kind,
+                   'del_property': 'del_'+kind,
+                   'property_id': property_id}
+        return render(request, 'property_app/get_property.html', context=context)
+    messages.error(request, "необходимо заполнить данные")
+    return redirect('change_'+kind, user_id=user_id, property_id=property_id)
+
+
 @check_authorization
-def change_transport(request, user_id, transport_id):
-    current_transport = Transport.objects.filter(pk=transport_id).first()
+def get_realty(request:HttpResponse, user_id: int, property_id: int) -> Callable:
+    list_fields = ['type_property', 'cadastral_number', 'cadastral_cost',
+                   'adress', 'area', 'date_registration', 'description']
+    return get_property(request, user_id, property_id, Realty, list_fields, 'realty', "недвижимости")
+
+
+@check_authorization
+def get_transport(request:HttpResponse, user_id: int, property_id: int) -> Callable:
+    list_fields = ['type_property', 'brand', 'model', 'year_release',
+                   'power_engine', 'registration_number', 'weigth',
+                   'carrying', 'date_registration', 'description',]
+    return get_property(request, user_id, property_id, Transport, list_fields, 'transport', "транспорте")
+
+
+def change_property(request: HttpResponse, user_id: int, property_id: int,
+                    type_form: forms.ModelForm, entity: models.Model,
+                    kind:str, in_title: str) -> HttpResponse:
+    current_property = entity.objects.filter(pk=property_id).first()
     if request.method == 'POST':
-        form = TransportForm(request.POST)
+        form = type_form(request.POST)
         if form.is_valid():
             data_by_form = form.cleaned_data
             for field, value in data_by_form.items():
                 if value:
-                    setattr(current_transport, field, value)
-            current_transport.save()
-            #     data_by_form['type_property'] or current_transport.type_property
-            # current_transport.brand = \
-            #     data_by_form['brand'] or current_transport.brand
-            # current_transport.model = \
-            #     data_by_form['model'] or current_transport.model
-            # current_transport.year_release = \
-            #     data_by_form['year_release'] or current_transport.year_release
-            # current_transport.registration_number = \
-            #     data_by_form['registration_number'] or \
-            #         current_transport.registration_number
-            # current_transport.weigth = \
-            #     data_by_form['weigth'] or current_transport.weigth
-            # current_transport.carrying = \
-            #     data_by_form['carrying'] or current_transport.carrying
-            # current_transport.date_registration = \
-            #     data_by_form['date_registration'] or current_transport.date_registration
-            # current_transport.description = \
-            #     data_by_form['description'] or current_transport.description
-            logger.info(f"Изменение данных о транспортном средстве {transport_id} \
+                    setattr(current_property, field, value)
+            current_property.save()
+            logger.info(f"Изменение данных о {in_title} {property_id} \
 пользователя {user_id}")
             messages.success(request, "Данные успешно изменены")
-            return redirect('show_transport', user_id=user_id)
+            return redirect('get_'+kind, user_id=user_id, property_id=property_id)
         logger.debug(
-            f"Ошибка сохранения данных объекта недвижимости {transport_id} \
+            f"Ошибка сохранения данных о {in_title} {property_id} \
 пользователя {user_id}")
         messages.error(request, "Неверные данные")
     else:
-        form = TransportForm()
+        form = type_form()
     context = {'form': form,
-               'title': 'Изменение данных о транспортном средстве',
+               'title': f'Изменение данных о {in_title}',
                'user_id': user_id,
-               'change_property': 'change_transport',
-               'del_property': 'del_transport',
-               'property': current_transport,
+               'property_id': property_id,
+               'change_property': 'change_'+kind,
+               'del_property': 'del_'+kind,
+               'property': current_property,
                'menu': menu}
     return render(request, 'property_app/edit_property.html', context)
 
 
 @check_authorization
-def change_realty(request, user_id, realty_id):
-    current_realty = Realty.objects.filter(pk=realty_id).first()
-    if request.method == 'POST':
-        form = RealtyForm(request.POST)
-        if form.is_valid():
-            data_by_form = form.cleaned_data
-            current_realty.type_property = \
-                data_by_form['type_property'] or current_realty.type_property
-            current_realty.cadastral_number = \
-                data_by_form['cadastral_number'] or current_realty.cadastral_number
-            current_realty.cadastral_cost = \
-                data_by_form['cadastral_cost'] or current_realty.cadastral_cost
-            current_realty.date_registration = \
-                data_by_form['date_registration'] or current_realty.date_registration
-            current_realty.adress =  data_by_form['adress'] or current_realty.adress
-            current_realty.area = data_by_form['area'] or current_realty.area
-            current_realty.description = \
-                data_by_form['description'] or current_realty.description
-            logger.info(f"Изменение данных об объекте недвижимости {realty_id} пользователя {user_id}")
-            messages.success(request, "Данные успешно изменены")
-            return redirect('show_realty', user_id=user_id)
-        logger.debug(
-            f"Ошибка сохранения данных объекта недвижимости {realty_id} пользователя {user_id}")
-        messages.error(request, "Неверные данные")
-    else:
-        form = RealtyForm()
-    context = {'form': form,
-               'title': 'Изменение данных об объекте недвижимости',
-               'user_id': user_id,
-               'change_property': 'change_realty',
-               'del_property': 'del_realty',
-               'property': current_realty,
-               'menu': menu}
-    return render(request, 'property_app/edit_property.html', context)
+def change_transport(request: HttpResponse, user_id: int, property_id: int) -> Callable:
+    return change_property(request, user_id, property_id,
+                           TransportForm, Transport, 'transport',
+                           'транспортном средстве')
+
+
+@check_authorization
+def change_realty(request: HttpResponse, user_id: int, property_id: int) -> Callable:
+    return change_property(request, user_id, property_id,
+                           RealtyForm, Realty, 'realty',
+                           'объекте недвижимости')
 
 
 def del_property(request: HttpResponse, user_id: int, property_id: int,
@@ -258,17 +192,17 @@ def del_property(request: HttpResponse, user_id: int, property_id: int,
 пользователя {user_id}")
         messages.error(request, "Данных не сущствует")
     finally:
-        return redirect('edit_'+kind, user_id=user_id)
+        return redirect('show_'+kind, user_id=user_id)
 
 @check_authorization
 def del_realty(request: HttpResponse, user_id: int,
-               realty_id: int) -> HttpResponse:
-    return del_property(request, user_id, realty_id, Realty,
+               property_id: int) -> HttpResponse:
+    return del_property(request, user_id, property_id, Realty,
                         'объекте недвижимости', 'realty')
 
 
 @check_authorization
 def del_transport(request: HttpResponse, user_id: int,
-               transport_id: int) -> HttpResponse:
-    return del_property(request, user_id, transport_id, Transport,
+              property_id: int) -> HttpResponse:
+    return del_property(request, user_id, property_id, Transport,
                         'транспортном средстве', 'transport')

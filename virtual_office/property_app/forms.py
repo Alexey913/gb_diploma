@@ -1,8 +1,18 @@
 from django import forms
+from django.forms import ValidationError
 
 from .models import Property, Transport, Realty
 
+from datetime import date
+
+
 class PropertyForm(forms.ModelForm):
+
+    def clean_date_registration(self):
+        date_registration = self.cleaned_data['date_registration']
+        if date_registration > date.today():
+            raise ValidationError('Дата не должна быть позже сегодняшней')
+        return date_registration
 
     class Meta:
         model = Property
@@ -18,6 +28,13 @@ class PropertyForm(forms.ModelForm):
 
 class TransportForm(PropertyForm):
 
+    def clean_year_release(self):
+        year_release = self.cleaned_data['year_release']
+        if year_release and len(str(year_release)) != 4 or year_release > date.today().year:
+            raise ValidationError('Введите корректное значение года')
+        return year_release
+    
+    
     class Meta(PropertyForm.Meta):
         model = Transport
 
@@ -47,8 +64,21 @@ class TransportForm(PropertyForm):
 
 
 class RealtyForm(PropertyForm):
+
+
+    def clean_cadastral_number(self):
+        cadastral_number = self.cleaned_data['cadastral_number']
+        try:
+            int(cadastral_number.replace(':', ''))
+        except:
+            raise ValidationError('Кадастровый номер должен содеражть только цифры и ":"')
+        if not ':' in cadastral_number:
+            raise ValidationError('Введите корректный кадастровый номер')
+        return cadastral_number
     
+
     class Meta(PropertyForm.Meta):
+        
         model = Realty
 
         fields = ['type_property', 'cadastral_number', 'cadastral_cost',

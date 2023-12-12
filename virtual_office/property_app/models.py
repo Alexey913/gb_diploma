@@ -6,6 +6,7 @@ from user_app.models import User
 
 from abstract_app.views import TRANSPORT_CATEGORIES, REALTY_CATEGORIES
 
+
 class Property(AbstractProperty):
     
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -23,12 +24,11 @@ class Transport(Property):
                              verbose_name='Марка ТС')
     model = models.CharField(max_length=16,
                              verbose_name='Модель ТС')
-    year_release = models.CharField(max_length=4,
-                                    verbose_name='Год выпуска ТС')
+    year_release = models.IntegerField(verbose_name='Год выпуска ТС')
     power_engine = models.IntegerField(null=True,
                                        blank=True,
                                        verbose_name='Мощность двигателя, л.с.')
-    registration_number = models.IntegerField(null=True,
+    registration_number = models.CharField(max_length=9, null=True,
                                               blank=True,
                                               verbose_name='Регистрационный номер')
     weigth = models.IntegerField(null=True,
@@ -41,7 +41,6 @@ class Transport(Property):
     class Meta:
         db_table = 'property_app_transport'
 
-    
 class Realty(Property):
     type_property = models.CharField(max_length=20,
                                      default='Квартира',

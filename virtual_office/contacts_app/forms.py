@@ -1,10 +1,13 @@
 from django import forms
+from django.forms import ValidationError
 
 from .models import Phone, Email, Contact
 
+from datetime import date
+
 
 class PhoneForm(forms.ModelForm):
-        
+
     class Meta:
         model = Phone
 
@@ -32,8 +35,10 @@ class ContactForm(forms.ModelForm):
     def clean(self):
         data = self.cleaned_data
         if not data['surname'] and not data['name']:
-            raise forms.ValidationError("Необходимо указать имя или фамилию")
-        
+            raise ValidationError("Необходимо указать имя или фамилию")
+        if data['birthday'] and data['birthday'] > date.today():
+            raise ValidationError('Дата рождения не должна быть позже сегодняшней')
+
     class Meta:
         model = Contact
 

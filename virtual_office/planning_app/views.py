@@ -223,10 +223,14 @@ def del_remind(request: HttpResponse, user_id: int, remind_id: int) -> HttpRespo
 #     return render(request, 'planning_app/base.html', context=context)
 
 def search_reminds_by_title(request: HttpResponse, user_id: int) -> Callable:
+    # if request.method == 'GET':
+    #     title = request.GET.get('search_box', None)
+    #     # date = data_by_form['date']
+    # reminds = Remind.objects.filter(title=title).all()
     if request.method == 'GET':
-        title = request.GET.get('search_box', None)
-        # date = data_by_form['date']
-    reminds = Remind.objects.filter(title=title).all()
+        title = request.GET.get('q')
+        print(title)
+        reminds = Remind.objects.filter(title__icontains=title).all()
     mes = 'По Вашему запросу ничего не найдено'
     return get_reminds(request, user_id, reminds, mes)
     # else:

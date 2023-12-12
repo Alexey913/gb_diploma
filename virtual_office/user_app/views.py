@@ -158,27 +158,17 @@ def change_data(request, user_id):
     if request.method == 'POST':
         form = ChangeDataForm(request.POST)
         if form.is_valid():
-            curent_data = Data.objects.get(user_id=user_id)
-            curent_user = User.objects.get(pk=user_id)
-            if curent_data:
+            current_data = Data.objects.get(user_id=user_id)
+            current_user = User.objects.get(pk=user_id)
+            if current_data:
                 data_by_form = form.cleaned_data
-                curent_data.name = data_by_form['name'] \
-                    or curent_data.name
-                curent_data.surname = data_by_form['surname'] \
-                    or curent_data.surname
-                curent_data.patronymic = data_by_form['patronymic'] \
-                    or curent_data.patronymic
-                curent_data.birthday = data_by_form['birthday'] \
-                    or curent_data.birthday
-                curent_data.birth_place = data_by_form['birth_place'] \
-                    or curent_data.birth_place
-                curent_data.place_residense = data_by_form['place_residense']\
-                    or curent_data.place_residense
-                curent_data.gender = data_by_form['gender'] or curent_data.gender
-                curent_user.phone = data_by_form['phone'] or curent_user.phone
-                curent_user.email = data_by_form['email'] or curent_user.email
-                curent_data.save()
-                curent_user.save()
+                for field, value in data_by_form.items():
+                    if value:
+                        setattr(current_data, field, value)
+                current_user.phone = data_by_form['phone'] or current_user.phone
+                current_user.email = data_by_form['email'] or current_user.email
+                current_data.save()
+                current_user.save()
             else:
                 form.save()
             logger.info(f'Успешное сохранение данных пользователя {user_id}')

@@ -1,6 +1,8 @@
 from django import forms
 from django.core.validators import RegexValidator
+from django.forms import ValidationError
 
+from datetime import date
 
 from .models import Spouce, Children, DriverCategoryShedule, Passport, Inn, Snils, DriverLicense, ForeignPassport, MilitaryTicket, DocTemplate
 
@@ -9,7 +11,12 @@ number_valid = RegexValidator(
 
 
 class DocForm(forms.ModelForm):
-
+    def clean_date_registration(self):
+        date_registration = self.cleaned_data['date_registration']
+        if date_registration > date.today():
+            raise ValidationError('Дата не должна быть позже сегодняшней')
+        return date_registration
+    
     class Meta:
         model = DocTemplate
 
@@ -32,6 +39,12 @@ class DocForm(forms.ModelForm):
 
 class PassportForm(DocForm):
 
+    def clean_date_adress_reg(self):
+        date_adress_reg = self.cleaned_data['date_adress_reg']
+        if date_adress_reg and date_adress_reg > date.today():
+            raise ValidationError('Дата не должна быть позже сегодняшней')
+        return date_adress_reg
+    
     class Meta(DocForm.Meta):
         model = Passport
         fields = DocForm.Meta.fields + \
@@ -68,6 +81,16 @@ class SnilsForm(DocForm):
 
 class DriverLicenseForm(DocForm):
 
+    def clean_date_start_expirience(self):
+        date_start_expirience = self.cleaned_data['date_start_expirience']
+        date_end_action = self.cleaned_data['date_end_action']
+        if date_start_expirience and date_start_expirience > date.today():
+            raise ValidationError('Дата не должна быть позже сегодняшней')
+        if date_end_action and date_start_expirience and date_end_action < date_start_expirience:
+            raise ValidationError(
+                'Дата начала стажа не должна быть больше даты окончания деяствия ВУ')        
+        return date_start_expirience
+
     class Meta(DocForm.Meta):
         model = DriverLicense
         fields = DocForm.Meta.fields + \
@@ -85,7 +108,27 @@ class DriverLicenseForm(DocForm):
 
 
 class DriverCategoryEditForm(forms.ModelForm):
+
+    def clean_date_begin(self):
+        date_begin = self.cleaned_data['date_begin']
+        date_end = self.cleaned_data['date_end']
+        if date_begin and date_begin > date.today():
+            raise ValidationError('Дата не должна быть позже сегодняшней')
+        if date_begin and date_begin > date_end:
+            raise ValidationError(
+                'Дата начала стажа не должна быть больше даты окончания')        
+        return date_begin
     
+    def clean_date_end(self):
+        date_end = self.cleaned_data['date_end']
+        date_begin = self.cleaned_data['date_begin']
+        if date_end and date_end > date.today():
+            raise ValidationError('Дата не должна быть позже сегодняшней')
+        if date_begin and date_end and date_begin > date_end:
+            raise ValidationError(
+                'Дата окончания стажа не должна быть меньше даты начала')        
+        return date_end   
+
     class Meta(DocForm.Meta):
         model = DriverCategoryShedule
         fields = ['date_begin', 'date_end', 'note']
@@ -135,6 +178,16 @@ class MilitaryTicketForm(DocForm):
 
 class ForeignPassportForm(DocForm):
 
+    def clean_date_end_action(self):
+        date_end_action = self.cleaned_data['date_end_action']
+        date_registration = self.cleaned_data['date_registration']
+        if date_end_action and date_end_action > date.today():
+            raise ValidationError('Дата не должна быть позже сегодняшней')
+        if date_end_action and date_end_action < date_registration:
+            raise ValidationError(
+                'Дата окончания действия не должна быть меньше даты выдачи')        
+        return date_end_action
+    
     class Meta(DocForm.Meta):
         model = ForeignPassport
         fields = DocForm.Meta.fields + \
@@ -150,11 +203,18 @@ class ForeignPassportForm(DocForm):
         for k, v in widget_list.items():
             widgets[k] = v
 
+
 class ChildrenForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['gender'].empty_label = "Не указан"
 
+    def clean_birthday(self):
+        birthday = self.cleaned_data['birthday']
+        if birthday and birthday > date.today():
+            raise ValidationError('Дата рождения не должна быть позже сегодняшней')   
+        return birthday
+    
     class Meta:
         model = Children
         fields = ['surname', 'name', 'patronymic', 'birthday', 'gender']
@@ -169,6 +229,17 @@ class ChildrenForm(forms.ModelForm):
 
 class SpouceForm(ChildrenForm):
 
+    def clean_date_marriage(self):
+        date_marriage = self.cleaned_data['date_marriage']
+        birthday = self.cleaned_data['birthday']
+        if date_marriage and date_marriage > date.today():
+            raise ValidationError(
+                'Дата регистрации брака не должна быть позже сегодняшней')
+        if birthday and date_marriage and date_marriage < birthday:
+            raise ValidationError(
+                'Дата регистрации брака не должна быть меньше даты рождения')
+        return date_marriage
+    
     class Meta(Children.Meta):
         model = Spouce
         fields = ChildrenForm.Meta.fields + ['date_marriage']

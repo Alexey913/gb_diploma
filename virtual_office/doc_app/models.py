@@ -7,6 +7,7 @@ from user_app.models import User
 from abstract_app.views import MILITARY_CATEGORIES
 
 
+
 class Document(DocTemplate):
 
     user = models.OneToOneField(
@@ -71,6 +72,7 @@ class DriverCategory(models.Model):
 
 
 class DriverLicense(Document):
+
     date_end_action = models.DateField(verbose_name='Окончание действия')
     date_start_expirience = models.DateField(
         verbose_name='Начало стажа', null=True, blank=True)

@@ -1,5 +1,6 @@
 import logging
 from typing import Callable
+from django import forms
 
 from django.shortcuts import render, redirect, HttpResponse, get_object_or_404
 from django.contrib import messages
@@ -108,25 +109,9 @@ def change_passport(request: HttpResponse, user_id: int) -> HttpResponse:
                 user_id=user_id).first()
             if current_passport:
                 data_by_form = form.cleaned_data
-                current_passport.series = \
-                    data_by_form['series'] or current_passport.series
-                current_passport.number = \
-                    data_by_form['number'] or current_passport.number
-                current_passport.date_registration = \
-                    data_by_form['date_registration'] \
-                    or current_passport.date_registration
-                current_passport.id_inspection = \
-                    data_by_form['id_inspection'] \
-                    or current_passport.id_inspection
-                current_passport.name_inspection = \
-                    data_by_form['name_inspection'] \
-                    or current_passport.name_inspection
-                current_passport.date_adress_reg = \
-                    data_by_form['date_adress_reg'] \
-                    or current_passport.date_adress_reg
-                current_passport.adress_reg_eq_place = \
-                    data_by_form['adress_reg_eq_place'] \
-                    or current_passport.adress_reg_eq_place
+                for field, value in data_by_form.items():
+                    if value and field != 'adress_registration':
+                        setattr(current_passport, field, value)
                 if current_passport.adress_reg_eq_place:
                     current_passport.adress_registration = \
                         Data.objects.filter(
@@ -156,33 +141,99 @@ def change_passport(request: HttpResponse, user_id: int) -> HttpResponse:
 
 
 @check_authorization
-def add_spouce(request: HttpResponse, user_id: int) -> HttpResponse:
+def add_people(request: HttpResponse, user_id: int, kind: str,
+               type_form: forms.ModelForm, in_title: str) -> HttpResponse:
     if request.method == 'POST':
-        form = SpouceForm(request.POST)
-        if form.is_valid():
-            spouce = form.save(commit=False)
-            if spouce.name or spouce.surname or \
-                    spouce.patronymic or spouce.birthday or \
-                    spouce.gender or spouce.date_marriage:
-                spouce.passport_id = user_id
-                spouce.save()
+        form = type_form(request.POST)
+        if form.is_valid() and form.has_changed():
+            people = form.save(commit=False)
+            people.passport_id = user_id
+            people.save()
+            if kind == 'edit_spouce':
                 Passport.objects.filter(
-                    user_id=user_id).first().spouce = spouce
-                logger.info(
-                    f"Сохранение данных о супруге пользователя {user_id}")
-                messages.success(request, "Данные о супруге добавлены")
-                return redirect('passport', user_id=user_id)
-            logger.debug(
-                f"Ошибка сохранения данных о супруге пользователя {user_id}")
-            messages.error(request, "Необходимо заполнить хотя бы одно поле")
+                user_id=user_id).first().spouce = people
+            else:
+                Passport.objects.filter(
+                    user_id=user_id).first().children_set.add(people)
+            logger.info(
+                f"Сохранение данных о {in_title} пользователя {user_id}")
+            messages.success(request, f"Данные о {in_title} добавлены")
+            return redirect('passport', user_id=user_id)
+        logger.debug(
+            f"Ошибка сохранения данных о {in_title} пользователя {user_id}")
+        messages.error(request, "Необходимо заполнить хотя бы одно поле")
     else:
-        form = SpouceForm()
+        form = type_form()
     context = {'form': form,
                'title': 'Данные о супруге',
                'user_id': user_id,
                'menu': menu}
-    return render(request, 'doc_app/edit_spouce.html', context)
+    return render(request, f'doc_app/{kind}.html', context)
 
+
+@check_authorization
+def add_spouce(request: HttpResponse, user_id: int) -> Callable:
+    return add_people(request, user_id, 'edit_spouce', SpouceForm, 'супруге')
+
+
+@check_authorization
+def add_children(request: HttpResponse, user_id: int) -> Callable:
+    return add_people(request, user_id, 'new_children', ChildrenForm, 'детях')
+
+# @check_authorization
+# def add_spouce(request: HttpResponse, user_id: int) -> HttpResponse:
+#     if request.method == 'POST':
+#         form = SpouceForm(request.POST)
+#         if form.is_valid():
+#             spouce = form.save(commit=False)
+#             if spouce.name or spouce.surname or \
+#                     spouce.patronymic or spouce.birthday or \
+#                     spouce.gender or spouce.date_marriage:
+#                 spouce.passport_id = user_id
+#                 spouce.save()
+#                 Passport.objects.filter(
+#                     user_id=user_id).first().spouce = spouce
+#                 logger.info(
+#                     f"Сохранение данных о супруге пользователя {user_id}")
+#                 messages.success(request, "Данные о супруге добавлены")
+#                 return redirect('passport', user_id=user_id)
+#             logger.debug(
+#                 f"Ошибка сохранения данных о супруге пользователя {user_id}")
+#             messages.error(request, "Необходимо заполнить хотя бы одно поле")
+#     else:
+#         form = SpouceForm()
+#     context = {'form': form,
+#                'title': 'Данные о супруге',
+#                'user_id': user_id,
+#                'menu': menu}
+#     return render(request, 'doc_app/edit_spouce.html', context)
+
+
+# @check_authorization
+# def add_children(request: HttpResponse, user_id: int) -> HttpResponse:
+#     if request.method == 'POST':
+#         form = ChildrenForm(request.POST)
+#         if form.is_valid():
+#             children = form.save(commit=False)
+#             if children.name or children.surname or \
+#                     children.patronymic or children.birthday or children.gender:
+#                 children.save()
+#                 Passport.objects.filter(
+#                     user_id=user_id).first().children_set.add(children)
+#                 logger.info(
+#                     f"Сохранение данных о детях пользователя {user_id}")
+#                 messages.success(request, "Данные о детях добавлены")
+#                 return redirect('show_children', user_id=user_id)
+#             logger.debug(
+#                 f"Ошибка сохранения данных о детях пользователя {user_id}")
+#             messages.error(request, "Необходимо заполнить хотя бы одно поле")
+#     else:
+#         form = ChildrenForm()
+#     context = {'form': form,
+#                'title': 'Данные о детях',
+#                'user_id': user_id,
+#                'menu': menu}
+#     return render(request, 'doc_app/new_children.html', context)
 
 @check_authorization
 def change_spouce(request: HttpResponse, user_id: int) -> HttpResponse:
@@ -231,33 +282,6 @@ def del_spouce(request: HttpResponse, user_id: int) -> HttpResponse:
         messages.error(request, "Данных не сущствует")
     finally:
         return redirect('passport', user_id=user_id)
-
-
-@check_authorization
-def add_children(request: HttpResponse, user_id: int) -> HttpResponse:
-    if request.method == 'POST':
-        form = ChildrenForm(request.POST)
-        if form.is_valid():
-            children = form.save(commit=False)
-            if children.name or children.surname or \
-                    children.patronymic or children.birthday or children.gender:
-                children.save()
-                Passport.objects.filter(
-                    user_id=user_id).first().children_set.add(children)
-                logger.info(
-                    f"Сохранение данных о детях пользователя {user_id}")
-                messages.success(request, "Данные о детях добавлены")
-                return redirect('show_children', user_id=user_id)
-            logger.debug(
-                f"Ошибка сохранения данных о детях пользователя {user_id}")
-            messages.error(request, "Необходимо заполнить хотя бы одно поле")
-    else:
-        form = ChildrenForm()
-    context = {'form': form,
-               'title': 'Данные о детях',
-               'user_id': user_id,
-               'menu': menu}
-    return render(request, 'doc_app/new_children.html', context)
 
 
 @check_authorization
