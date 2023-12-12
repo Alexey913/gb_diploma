@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect, HttpResponse, get_object_or_404
 from django.contrib import messages
 from django.db import models
 
-from abstract_app.views import properties, menu, check_authorization, check_doc, get_data_with_verbose_name
+from abstract_app.views import properties, menu, check_authorization, get_data_with_verbose_name
 
 from .models import Transport, Realty
 from .forms import TransportForm, RealtyForm
@@ -35,37 +35,6 @@ def show_property(user_id: int, entity: models.Model, list_fields: list) -> dict
         return output_property
 
 
-
-# def show_realty(user_id: int) -> dict:
-#     realties = Realty.objects.filter(user_id=user_id).all()
-#     if realties:
-#         output_realty = []
-#         for real in realties:
-#             realty = Realty.objects.values('type_property', 'cadastral_number',
-#                                            'cadastral_cost', 'adress', 'area',
-#                                            'date_rregistration', 'description',
-#                                            ).filter(pk=real.pk).first()
-#             object_realty = get_object_or_404(Realty, pk=real.pk)
-#             output_realty.append(get_data_with_verbose_name(object_realty, realty))
-#         return output_realty
-
-
-# def show_transport(user_id):
-#     transports = Transport.objects.filter(user_id=user_id).all()
-#     if transports:
-#         output_transport = []
-#         for tr in transports:
-#             transport = Transport.objects.values('type_property', 'brand', 'model',
-#                                                  'year_release', 'power_engine',
-#                                                  'registration_number', 'weigth', 'carrying',
-#                                                  'date_rregistration', 'description',
-#                                            ).filter(pk=tr.pk).first()
-#             object_transport = get_object_or_404(Transport, pk=tr.pk)
-#             output_transport.append(get_data_with_verbose_name(object_transport, transport))
-#         return output_transport
-
-
-@check_authorization
 def get_property(request: HttpResponse, user_id: int,
                  entity: models.Model, list_fields: list,
                  kind: str, in_title: str) -> HttpResponse:
@@ -107,7 +76,7 @@ def edit_property(request: HttpResponse, user_id: int,
         logger.debug(f"Нет данных о '{in_title}' пользователя {user_id} - \
 переход к заполнению данных")
         messages.error(request,
-        f'Нет сведений о "{in_title}" пользователя. Введите необходимые данные')
+        f'Нет сведений о {in_title} пользователя. Введите необходимые данные')
         if kind == 'realty':
             return add_transport(request, user_id)
         return add_realty(request, user_id)
