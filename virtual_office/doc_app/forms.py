@@ -84,17 +84,23 @@ class SnilsForm(DocForm):
 class DriverLicenseForm(DocForm):
 
     def clean_date_start_expirience(self):
+        super().clean()
         date_start_expirience = self.cleaned_data['date_start_expirience']
-        date_end_action = self.cleaned_data['date_end_action']
         date_registration = self.cleaned_data['date_registration']
         if date_start_expirience and date_start_expirience > date.today():
             raise ValidationError('Дата не должна быть позже сегодняшней')
         if date_start_expirience and date_registration < date_start_expirience:
             raise ValidationError(
-                'Дата начала стажа не должна быть больше даты выдачи ВУ')
-        if date_start_expirience and date_start_expirience > date.today():
-            raise ValidationError('Дата не должна быть позже сегодняшней')    
+                'Дата начала стажа не должна быть больше даты выдачи ВУ')   
         return date_start_expirience
+
+    def clean_date_end_action(self):
+        super().clean()
+        date_start_expirience = self.cleaned_data['date_start_expirience']
+        date_end_action = self.cleaned_data['date_end_action']
+        if date_end_action and date_end_action < date_start_expirience:
+            raise ValidationError('Дата окончания действия ВУ не должна быть меьше даты начала стажа')   
+        return date_end_action
 
     class Meta(DocForm.Meta):
         model = DriverLicense
@@ -115,12 +121,14 @@ class DriverLicenseForm(DocForm):
 class DriverCategoryEditForm(forms.ModelForm):
 
     def clean_date_begin(self):
+        super().clean()
         date_begin = self.cleaned_data['date_begin']
         if date_begin and date_begin > date.today():
             raise ValidationError('Дата не должна быть позже сегодняшней')    
         return date_begin
     
     def clean_date_end(self):
+        super().clean()
         date_end = self.cleaned_data['date_end']
         date_begin = self.cleaned_data['date_begin']
         if date_begin and date_end and date_begin > date_end:
@@ -199,10 +207,6 @@ class ForeignPassportForm(DocForm):
     def clean_date_end_action(self):
         super().clean()
         date_end_action = self.cleaned_data['date_end_action']
-        # foreign_name = self.cleaned_data['foreign_name']
-        # foreign_surname = self.cleaned_data['foreign_surname']
-        # if re.search(r'[^a-zA-Z]', foreign_name+foreign_surname):
-        #     raise ValidationError('Имя и фамилия должны быть написаны только латиницей')    
         try:
             date_registration = self.cleaned_data['date_registration']
             if date_end_action < date_registration:
@@ -212,6 +216,20 @@ class ForeignPassportForm(DocForm):
             raise ValidationError('Проверьте дату выдачи паспорта')
         return date_end_action
             
+    def clean_foreign_name(self):
+        super().clean()
+        foreign_name = self.cleaned_data['foreign_name']
+        if re.search(r'[^a-zA-Z]', foreign_name):
+            raise ValidationError('Имя должно быть написано только латиницей')    
+        return foreign_name
+    
+    def clean_foreign_surname(self):
+        super().clean()
+        foreign_surname = self.cleaned_data['foreign_surname']
+        if re.search(r'[^a-zA-Z]', foreign_surname):
+            raise ValidationError('Фамилия должна быть написана только латиницей')    
+        return foreign_surname
+    
 
 class ChildrenForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -219,6 +237,7 @@ class ChildrenForm(forms.ModelForm):
         self.fields['gender'].empty_label = "Не указан"
 
     def clean_birthday(self):
+        super().clean()
         birthday = self.cleaned_data['birthday']
         if birthday and birthday > date.today():
             raise ValidationError('Дата рождения не должна быть позже сегодняшней')   
@@ -239,6 +258,7 @@ class ChildrenForm(forms.ModelForm):
 class SpouceForm(ChildrenForm):
 
     def clean_date_marriage(self):
+        super().clean()
         date_marriage = self.cleaned_data['date_marriage']
         birthday = self.cleaned_data['birthday']
         if date_marriage and date_marriage > date.today():

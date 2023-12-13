@@ -1,35 +1,40 @@
 {% extends 'base.html' %}
+
+{% block mini_title %}
+    <h1>Пользователь {{ user_name }}</h1>
+{% endblock %}
+
 {% block content %}
 
-
-    <div><h1>Данные пользователя</h1></div>
+    <div><h2>{{ title }}</h2></div>
     <br>
-    <div>
-        <table cellpadding="3">
-                
-                    <tr>
-                        <td align="left" width="200">
-                        {% if context %}
-                            {% for k, v in context.items %}
-                                {{ k }}: {{ v }}
-                                <br>
-                            {% endfor %}
-                        {% else %}
-                            <h2>Данные о пользователе отутствуют.</h2>
-                            <h3>Желаете добавить?</h3>
-                        {% endif %}
-
-
-                        </td>
-                    </tr>
-        
-
+    <table>
+        <tr><td>
+        <table align="left" cellpadding="1">
+            {% for k, v in context.items %}
+                <tr>
+                    <td>
+                        <font size="4"><b>{{ k }}:</b></font>
+                    </td>
+                    <td>
+                        &nbsp;&nbsp;&nbsp;
+                    </td>
+                    <td>
+                        <font size="4">{{ v }}</font>
+                    </td>
+                </tr>
+        {% endfor %}</h3>
         </table>
-        <br>
-        <h2><a href="{% url 'change_data' user_id %}"> Изменить личные данные </a></h2>
-        <h2>Заполнить данные из документов</h2>
-        <h2>Заполнить данные через Госуслуги</h2>
-
-</div>
+        </td></tr>
+        <tr><td>
+        <div>
+            <br>
+            <h2><a href="{% url 'change_data' user_id %}"> Изменить личные данные </a></h2>
+            <br>
+            <h3>Заполнить данные из документов</h2>
+            <h3>Заполнить данные через Госуслуги</h2>
+        </div>
+        </td></tr>
+    </table>
 
 {% endblock %}

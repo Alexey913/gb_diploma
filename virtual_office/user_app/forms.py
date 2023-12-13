@@ -1,4 +1,7 @@
+from datetime import date
+import re
 from django import forms
+from django.forms import ValidationError
 from django.core.validators import RegexValidator
 
 from string import ascii_lowercase as low_alpha
@@ -84,3 +87,32 @@ class ChangeDataForm(forms.ModelForm):
             'birth_place': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Адрес рождения'}),
             'place_residense': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Адрес местожительства'}),
         }
+
+    def clean_name(self):
+        super().clean()
+        name = self.cleaned_data['name']
+        if re.search(r'[^а-яА-Яa-zA-Z]', name):
+            raise ValidationError('Введите корректное имя')    
+        return name
+    
+    def clean_surname(self):
+        super().clean()
+        surname = self.cleaned_data['surname']
+        if re.search(r'[^а-яА-Яa-zA-Z]', surname):
+            raise ValidationError('Введите корректную фамилию')    
+        return surname
+    
+    def clean_patronymic(self):
+        super().clean()
+        patronymic = self.cleaned_data['patronymic']
+        if re.search(r'[^а-яА-Яa-zA-Z]', patronymic):
+            raise ValidationError('Введите корректное отчество')    
+        return patronymic
+    
+    def clean_birthday(self):
+        super().clean()
+        birthday = self.cleaned_data['birthday']
+        if birthday and birthday > date.today():
+            raise ValidationError('Дата рождения не должна быть позже сегодняшней')   
+        return birthday
+    

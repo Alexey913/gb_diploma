@@ -7,6 +7,7 @@ from django.contrib import messages
 from django.db import models
 
 from abstract_app.views import properties, menu, check_authorization, get_data_with_verbose_name
+from user_app.models import Data
 
 from .models import Transport, Realty
 from .forms import TransportForm, RealtyForm
@@ -17,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 @check_authorization
 def get_properties(request: HttpResponse, user_id: int) -> HttpResponse:
-    context = {'title': 'Документы',
+    context = {'title': 'Собственность пользователя',
                'user_id': user_id,
                'properties': properties,
                'menu': menu}
@@ -32,6 +33,7 @@ def show_list_property(request: HttpResponse, user_id: int, kind: str,
                 'user_id': user_id,
                 'properties': properties,
                 'menu': menu,
+                'user_name': Data.objects.filter(user_id=user_id).first(),
                 'add_property': 'add_'+kind,
                 'get_property': 'get_'+kind}
         return render(request, 'property_app/show_list_property.html', context=context)
@@ -111,7 +113,8 @@ def get_property(request: HttpResponse, user_id: int, property_id: int,
                    'add_property':'add_'+kind,
                    'change_property': 'change_'+kind,
                    'del_property': 'del_'+kind,
-                   'property_id': property_id}
+                   'property_id': property_id,
+                   'property_name': entity.objects.filter(pk=property_id).first()}
         return render(request, 'property_app/get_property.html', context=context)
     messages.error(request, "необходимо заполнить данные")
     return redirect('change_'+kind, user_id=user_id, property_id=property_id)

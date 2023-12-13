@@ -149,7 +149,8 @@ def show_data(request, user_id):
     context_to_template = {'context': context,
                             'title': 'Данные пользователя',
                             'user_id': user_id,
-                            'menu': menu}
+                            'menu': menu,
+                            'user_name': object_data}
     return render(request, 'user_app/data.html', context=context_to_template)
 
 
@@ -163,11 +164,21 @@ def change_data(request, user_id):
             if current_data:
                 data_by_form = form.cleaned_data
                 for field, value in data_by_form.items():
-                    if value:
+                    if value and field != 'phone' and field != 'email':
                         setattr(current_data, field, value)
-                current_user.phone = data_by_form['phone'] or current_user.phone
-                current_user.email = data_by_form['email'] or current_user.email
                 current_data.save()
+                phone = data_by_form['phone']
+                email = data_by_form['email']
+                if phone:
+                    if get_user(phone):
+                        messages.error(request, "Номер телефона зарегистрирован другим пользователем")
+                    else:
+                        current_user.phone = phone
+                if email:
+                    if get_user(email):
+                        messages.error(request, "E-mail зарегистрирован другим пользователем")
+                    else:
+                        current_user.email = email    
                 current_user.save()
             else:
                 form.save()
@@ -181,5 +192,6 @@ def change_data(request, user_id):
     context = {'form': form,
             'title': 'Изменение личных данных',
             'user_id': user_id,
+            'user_name': Data.objects.get(user_id=user_id),
             'menu': menu}
     return render(request, 'user_app/change_data.html', context=context)

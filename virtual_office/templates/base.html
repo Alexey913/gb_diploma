@@ -22,7 +22,7 @@
             }
             .gradient_footer {
              background: linear-gradient(to top, #c1b382, #cbc2a6);
-             color: #FFFFFF;
+             color: #685a3c;
              width:100%;
              border-radius:10px;
             }
@@ -31,14 +31,14 @@
             border: 1;
             border-radius: 5px;
             background:  #8b7d4b;
-            color: #fff;
+            color: #dbcfa8;
             padding: 8px 16px;
             font-size: 16px;
             }
         </style>
     </head>
     <body link="#2d2817" vlink="#2d2817" alink="#02a3fa">
-        <table style="position: absolute; width: 100%; height: 100%;" class="gradient_main" cellpadding="20" border="1">
+        <table border="0", style="position: absolute; width: 100%; height: 100%;" class="gradient_main" cellpadding="20" >
             <tr class="gradient_head" height="7%" >
                 <td align="center" valign="center" colspan="3">
                     {% block main_title %}
@@ -46,59 +46,62 @@
                     {% endblock %}
                 </td>
             </tr>
-            <tr height="5%">
-                <td align="left" valign="top" colspan="2">
-                    {% block mini_title %}
-                        Подзаголовок
-                    {% endblock %}
-                </td>
-                <td align="right" valign="top">
-                    {% block login %}
-                    {% if user_id %}
-                    <a href="{% url 'logout' %}"> Выйти </a>
-                    {% else %}
-                        Регистрация | Авторизация
-                    {% endif %}
-                    {% endblock %}
-                </td>
-            <tr height="74%">
-                <td width="30%" align="left" valign="top">
+            <tr heigth="7%">
+                <td rowspan="2" width="20%" align="left" valign="top">
                     {% block menu %}
-                        <h2>Главное меню</h2>
+                        <h1>Главное меню</h1>
                         {% for item in menu %}
-                            {% if not forloop.last %}
-                                <li><a href="{% url item.url_name user_id %}">{{ item.title }}</a></li>
-                            {% else %}
-
-                                    <li class="last"><a href="{% url item.url_name user_id %}">{{ item.title }}</a></li>
-
-                            {% endif %}
+                                <h2><li><a href="{% url item.url_name user_id %}">{{ item.title }}</a></li></h2>
                         {% endfor %}
                     {% endblock %}
                 </td>
-                <td width="70%" align="left" valign="top" colspan="2">
+                <td width="40%" align="left" valign="top">
+                    {% block mini_title %}
+                        {{ title }}
+                    {% endblock %}
+                </td>
+                <td width="40%" align="right" valign="top">
+                    {% block login %}
+                        <h2>{% if user_id %}
+                        <a href="{% url 'logout' %}"> Выйти </a>
+                        {% else %}
+                        <a href="{% url 'registration' %}"> Регистрация </a> | <a href="{% url 'authorization' %}"> Авторизация </a>
+                        {% endif %}</h2>
+                    {% endblock %}
+                </td>
+            </tr>
+            <tr heigth="72%">
+                <td width="40%" align="left" valign="top" style="white-space: nowrap">
                     {% block messages %}
-                    {% if messages %}
-                        <ul class="messages">
-                            {% for message in messages %}
-                                <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>
-                                    <font color="FFAA00" bold> {{ message }} </font>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    {% endif %}
-                {% endblock %}
+                        {% if messages %}
+                            <ul class="messages">
+                                {% for message in messages %}
+                                    <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>
+                                        <font size="5" color="aa0100" bold> {{ message }} </font>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    {% endblock %}
                     {% block content %}
                         <h2>Наполнение страницы</h2>
                     {% endblock %}
                 </td>
-            </tr>
-            <tr border="1" class="gradient_footer" height="14%">
-                <td colspan="3">
-                    {% block footer %}
-                        <h3 align = "right">Информация</h3>
+                <td width="40%" align="left" valign="top">
+                    {% block information %}
+
                     {% endblock %}
                 </td>
+            </tr>
+            <tr>
+                <tr border="1" class="gradient_footer" height="14%">
+                    <td colspan="3">
+                        {% block footer %}
+                            <h2 align = "right">Дипломная работа: Разрабочик Python</h2>
+                            <h3 align = "right"> GeekBrains, Шевцов А.П.</h3>
+                        {% endblock %}
+                    </td>
+                </tr>
             </tr>
         </table>
     </body>

@@ -16,10 +16,6 @@ class Data(People):
     place_residense = models.CharField(max_length=100, null=True, blank=True, verbose_name='Место жительства')
     user = models.OneToOneField(
         'User', on_delete=models.CASCADE, primary_key=True)
-
-    def __str__(self):
-        attrs = vars(self)
-        return (', '.join("%s: %s" % item for item in attrs.items()))
     
     class Meta:
         db_table = "user_app_data"

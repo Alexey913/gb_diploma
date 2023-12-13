@@ -28,6 +28,10 @@ class People(models.Model):
         null=True, blank=True, verbose_name='Дата рождения')
     gender = models.CharField(max_length=7, null=True,
                               blank=True, choices=GENDERS, verbose_name='Пол')
+    
+    def __str__(self) -> str:
+        return f'{self.surname or ""} {self.name or ""} {self.patronymic or ""}'
+
 
 class CommonDocTemplate(models.Model):
 

@@ -13,7 +13,7 @@
                 </tr>
                 <tr>
                     <td colspan="2" align="right">
-                        <font color="FFAA00">{{ f.errors }}</font>
+                        <font color="aa0100">{{ f.errors }}</font>
                     </td>
                 </tr>
             {% endfor %}
@@ -22,6 +22,7 @@
         <input class="c-button" type="submit" value="Зарегистрироваться">
     </form>
 </div>
-<a href="{% url 'authorization' %}"> Войти в офис </a>
+<br>
+<a href="{% url 'authorization' %}"> <h3> Войти в офис </h3></a>
 
 {% endblock %}

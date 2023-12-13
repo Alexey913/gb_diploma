@@ -1,26 +1,8 @@
 {% extends 'base.html' %}
 
 {% block mini_title %}
-<table cellpadding="3" cellspacing="4" border="2">
+<table cellpadding="3" cellspacing="4">
     <tr>
-        <td>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        </td>
-        <td rowspan="3">
-            {{ date_dict.calendar|safe }}
-        </td>
-        <td>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        </td>
-        <th align="left">
-            Сегодня: {{ date_dict.date }}
-        </th>
-        <td>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        </td>
 
         <td rowspan="3" align="center">
             <h3>Поиск событий по названию</h3>
@@ -71,66 +53,37 @@
             </form>
         </td>
     </tr>
-    <tr>
-        <td>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        </td>
-        <td>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        </td>
-        <th align="center">
-            Текущее время: {{ date_dict.time }}
-        </th>
-        <td>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        </td>
-        <td>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        </td>
-    </tr>
-    <tr>
-        <td>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        </td>
-        <td>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        </td>
-        <th align="center">
-            <a href="{% url 'reminds_at_current_month' user_id %}"><h4>События в текущем месяце</h4></a>
-        </th>
-        <td>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        </td>
-        <td>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        </td>
-    </tr>
 </table>
 {% endblock %}
 
-{% block content %}
+{% block menu %}
+<h1>Главное меню</h1>
 
-    <br>
-    <div>
-        <table cellpadding="3">
-                
-                    <tr>
-                        <td align="left" width="200"></td>
-                    </tr>
-        
+{% for item in menu %}
+        <h2><li><a href="{% url item.url_name user_id %}">{{ item.title }}</a></li></h2>
+{% endfor %}
 
-        </table>
-        <h2>Заполнить данные из документов</h2>
-        <h2>Заполнить данные через Госуслуги</h2>
-
-</div>
+<table cellpadding="3" align="left" cellspacing="4">
+    <tr>
+        <td align="center">
+            <a href="{% url 'reminds_at_current_month' user_id %}"><h4>События в текущем месяце</h4></a>
+        </td>
+    </tr>
+    <tr>
+        <td align="center">
+            {{ date_dict.calendar|safe }}
+        </td>
+    </tr>
+    <tr>
+        <td align="center">
+            Сегодня: {{ date_dict.date }}
+        </td>
+    </tr>
+    <tr>
+        <td align="center">
+            Текущее время: {{ date_dict.time }}
+        </td>
+    </tr>
+</table>
 
 {% endblock %}

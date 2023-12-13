@@ -1,32 +1,40 @@
 {% extends 'planning_app/base.html' %}
 {% block content %}
 
-    <div>
-        <table cellpadding="3">
-                <h2>{{ title }}</h2>
-            <tr>
-                <td align="left" width="200">
+<div><h2>{{ title }}</h2></div>
+    <br>
+    <table>
+        <tr><td>
+        <table align="left" cellpadding="3">
                 {% if reminds %}
                     {% for remind in reminds %}
-                        {% if not forloop.last %}
-                            <li><a href="{% url 'show_remind' user_id remind.pk %}">{{ remind.title }}</a></li>
-                        {% else %}
-                            <li class="last"><a href="{% url 'show_remind' user_id remind.pk %}">{{ remind.title }}</a></li>
-                        {% endif %}
-                    {% endfor %}
+                    <tr>
+                        <td>
+                        <a href="{% url 'show_remind' user_id remind.pk %}"><font size="5"><b>{{ remind.title }}</b></font></a>
+                        <br><br>
+                        </td>
+                    </tr>
+                {% endfor %}
                 {% else %}
-                    <h2>{{ mes }}</h2>
+                <tr>
+                    <td>
+                    <h4>{{ mes }}</h4>
+                    </td>
+                </tr>
                 {% endif %}
+            </table>
+        </td></tr>
+        <tr><td>
                 <a href="{% url 'add_remind' user_id %}"><h3>Добавить событие</h3></a>
                 </td>
             </tr>
-        
-
+            <tr><td>
+                <div>
+                    <br>
+                    <h3>Заполнить данные из документов</h2>
+                    <h3>Заполнить данные через Госуслуги</h2>
+                </div>
+                </td></tr>
         </table>
-        <br>
-        <h2>Заполнить данные из документов</h2>
-        <h2>Заполнить данные через Госуслуги</h2>
-
-</div>
 
 {% endblock %}

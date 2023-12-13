@@ -1,9 +1,27 @@
 {% extends 'user_app/base.html' %}
 {% block content %}
-    <form action="" method="post">
+<div>
+    <form action="{% url 'authorization' %}" method="post">
         {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="Войти">
+        <table cellpadding="3">
+            {% for f in form %}
+                <tr>
+                    <td align="left" width="200">
+                        <label for="{{ f.id_for_label }}">{{f.label}}: </label>
+                    </td>
+                    <td> {{ f }} </td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="right">
+                        <font color="aa0100">{{ f.errors }}</font>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+        <br>
+        <input class="c-button" type="submit" value="Войти в офис">
     </form>
-    <a href="{% url 'registration' %}"> Регистрация </a>
+</div>
+<br>
+    <a href="{% url 'registration' %}"> <h3> Регистрация </h3> </a>
 {% endblock %}

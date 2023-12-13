@@ -41,6 +41,11 @@ class Transport(Property):
     class Meta:
         db_table = 'property_app_transport'
 
+    def __str__(self) -> str:
+        return f'{self.type_property} {self.brand or ""} \
+{self.model or ""} {self.registration_number or ""}'
+
+
 class Realty(Property):
     type_property = models.CharField(max_length=20,
                                      default='Квартира',
@@ -56,3 +61,6 @@ class Realty(Property):
 
     class Meta:
         db_table = 'property_app_realty'
+
+    def __str__(self) -> str:
+        return f'{self.type_property} {self.area} кв.м. {self.cadastral_number}'
