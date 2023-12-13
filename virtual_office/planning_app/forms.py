@@ -1,5 +1,7 @@
 from django import forms
 
+from django.forms import ValidationError
+
 from .models import Remind
 
 class RemindForm(forms.ModelForm):
@@ -18,23 +20,27 @@ class RemindForm(forms.ModelForm):
                 attrs={'class': 'form-control', 'placeholder': 'Описание события'}),
         }
 
-class SearchRemindTitleForm(forms.ModelForm):
+class SearchRemindTitleForm(forms.Form):
 
-    class Meta:
-        model = Remind
-
-        fields = ['title']
-
-        widgets = {
-            'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Заголовок'}),
-        }
+    title = forms.CharField(max_length=50, min_length=2,
+                                error_messages={'required': 'Заполните поле поиска'},
+                                widget=forms.TextInput(attrs={
+                                    'class': 'form-control', 'placeholder': 'Заголовок'}))
 
 
-class SearchRemindDateForm(forms.ModelForm):
+class SearchRemindDateForm(forms.Form):
 
-    class Meta:
-        model = Remind
-
-        fields = ['date']
-
-        widgets = {'date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'})}
+    start_date = forms.DateField(error_messages={'required': 'Заполните поле поиска'},
+                                widget=forms.DateInput(
+                                    attrs={'class': 'form-control', 'type': 'date'}))
+    end_date = forms.DateField(error_messages={'required': 'Заполните поле поиска'},
+                                widget=forms.DateInput(
+                                    attrs={'class': 'form-control', 'type': 'date'}))
+    
+    # def clean_end_date(self):
+    #     end_date = self.cleaned_data['end_date']
+    #     start_date = self.cleaned_data['start_date']
+    #     if start_date < end_date:
+    #         raise ValidationError('Введите корректные даты')   
+    #     return end_date
+    

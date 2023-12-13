@@ -9,19 +9,19 @@
         </title>
         <style>
             .gradient_head {
-             background: linear-gradient(to right, #F5F5F5, #FF99FF);
+             background: linear-gradient(to right, #8b7d4b, #b09e67);
              color: #000000;
              width:100%;
              border-radius:10px;
             }
             .gradient_main {
-             background: linear-gradient(to right, #404040, #D9D9D9);
-             color: #FF66FF;
+             background: linear-gradient(to right, #ccbd8d, #b1a789);
+             color: #684508;
              width:100%;
              border-radius:10px;
             }
             .gradient_footer {
-             background: linear-gradient(to top, #404040, #D9D9D9);
+             background: linear-gradient(to top, #c1b382, #cbc2a6);
              color: #FFFFFF;
              width:100%;
              border-radius:10px;
@@ -30,18 +30,20 @@
             appearance: none;
             border: 1;
             border-radius: 5px;
-            background: #952499;
+            background:  #8b7d4b;
             color: #fff;
             padding: 8px 16px;
             font-size: 16px;
             }
         </style>
     </head>
-    <body link="#947b00" vlink="d1b00a" alink="d1b00a">
-        <table style="position: absolute; width: 100%; height: 100%;" class="gradient_main" cellpadding="20">
-            <tr class="gradient_head" height="10%" >
+    <body link="#2d2817" vlink="#2d2817" alink="#02a3fa">
+        <table style="position: absolute; width: 100%; height: 100%;" class="gradient_main" cellpadding="20" border="1">
+            <tr class="gradient_head" height="7%" >
                 <td align="center" valign="center" colspan="3">
+                    {% block main_title %}
                     <h1>{{ title }}</h1>
+                    {% endblock %}
                 </td>
             </tr>
             <tr height="5%">
@@ -59,10 +61,10 @@
                     {% endif %}
                     {% endblock %}
                 </td>
-            <tr height="65%">
+            <tr height="74%">
                 <td width="30%" align="left" valign="top">
                     {% block menu %}
-                        <h2>Меню приложения</h2>
+                        <h2>Главное меню</h2>
                         {% for item in menu %}
                             {% if not forloop.last %}
                                 <li><a href="{% url item.url_name user_id %}">{{ item.title }}</a></li>
@@ -91,7 +93,7 @@
                     {% endblock %}
                 </td>
             </tr>
-            <tr border="1" class="gradient_footer" height="20%">
+            <tr border="1" class="gradient_footer" height="14%">
                 <td colspan="3">
                     {% block footer %}
                         <h3 align = "right">Информация</h3>

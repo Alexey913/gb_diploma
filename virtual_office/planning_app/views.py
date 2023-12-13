@@ -6,7 +6,6 @@ from abstract_app.views import  menu, check_authorization, get_data_with_verbose
 
 from django.db.models.query import QuerySet
 
-
 import locale
 
 import logging
@@ -16,12 +15,10 @@ import numpy as np
 from calendar import HTMLCalendar
 from datetime import datetime
 
-from datetime import datetime
-
 from dateutil import rrule
 
 from .models import Remind
-from .forms import RemindForm
+from .forms import RemindForm, SearchRemindDateForm, SearchRemindTitleForm
 
 
 locale.setlocale(
@@ -46,10 +43,12 @@ def show_calendar() -> dict:
             }
 
 
-def get_reminds(request: HttpResponse, user_id: int, reminds: QuerySet, mes: str) -> HttpResponse:
+def get_reminds(request: HttpResponse, user_id: int,
+                reminds: QuerySet,mes: str, title: str) -> HttpResponse:
     context = {'date_dict': show_calendar(),
                'user_id': user_id,
                'reminds': reminds,
+               'title': title,
                'mes': mes,
                'menu': menu}
     return render(request, 'planning_app/reminds.html', context=context)
@@ -63,7 +62,8 @@ def reminds(request: HttpResponse, user_id: int) -> Callable:
                                     date__month=today.month,
                                     date__day=today.day).all()
     mes = 'На сегодня событый нет'
-    return get_reminds(request, user_id, reminds, mes)
+    title = 'События на сегодня'
+    return get_reminds(request, user_id, reminds, mes, title)
    
 
 @check_authorization
@@ -73,7 +73,8 @@ def reminds_at_current_month(request: HttpResponse, user_id: int) -> Callable:
                                     date__year=today.year,
                                     date__month=today.month).all()
     mes = 'В текущем месяце нет событий'
-    return get_reminds(request, user_id, reminds, mes)
+    title = 'События в текущем  месяце'
+    return get_reminds(request, user_id, reminds, mes, title)
 
 
 def func_for_add_repeat_events(remind:Remind, func: Callable, delta: int, period: str):
@@ -147,14 +148,13 @@ def change_remind(request: HttpResponse, user_id: int, remind_id: int) -> HttpRe
         form = RemindForm(request.POST)
         if form.is_valid():
             data_by_form = form.cleaned_data
-            current_remind.title = data_by_form['title'] or current_remind.title
-            current_remind.date = data_by_form['date'] or current_remind.date
+            for field, value in data_by_form.items():
+                if value and field != 'all_day' and field != 'time':
+                    setattr(current_remind, field, value)
             if data_by_form['all_day']:
                 current_remind.time = '00:00:00'
             else:
                 current_remind.time = data_by_form['time'] or current_remind.time
-            current_remind.repeat = data_by_form['repeat'] or current_remind.repeat
-            current_remind.description = data_by_form['description'] or current_remind.description
             current_remind.save()
             Remind.objects.filter(repeat_id=current_remind.repeat_id).exclude(
                 pk=current_remind.pk).all().delete()
@@ -203,40 +203,41 @@ def del_remind(request: HttpResponse, user_id: int, remind_id: int) -> HttpRespo
     finally:
         return redirect('reminds', user_id=user_id)
     
+def inject_form(request) -> dict:
+    return {"form_title":SearchRemindTitleForm(),
+            "form_date":SearchRemindDateForm()}
 
-# @check_authorization
-# def search_reminds_by_title(request, user_id):
-#     if request.method == 'POST':
-#         form = SearchRemindTitleForm(request.POST)
-#         if form.is_valid():
-#             data_by_form = form.cleaned_data
-#             title = data_by_form['title']
-#             # date = data_by_form['date']
-#             reminds = Remind.objects.filter(title=title).all()
-#             return get_reminds(request, user_id, reminds)
-#     else:
-#         form = SearchRemindTitleForm()
-#     context = {'date_dict': show_calendar(),
-#                'user_id': user_id,
-#                'form': form,
-#                'menu': menu}
-#     return render(request, 'planning_app/base.html', context=context)
+@check_authorization
+def search_by_title(request: HttpResponse, user_id: int) -> Callable:
+    if request.method == 'POST':
+        form = SearchRemindTitleForm(request.POST)
+        if form.is_valid():
+            data_by_form = form.cleaned_data
+            title = data_by_form['title']
+            reminds = Remind.objects.filter(
+                user_id=user_id, title__contains=title).all()
+            mes = 'По Вашему запросу ничего не найдено'
+            title_templ = f'Найдено по названию {title}:'
+            return get_reminds(request, user_id, reminds, mes, title_templ)
+    else:
+        form = SearchRemindTitleForm()
+        reminds = None
+    return redirect('search_by_title', user_id=user_id)
 
-def search_reminds_by_title(request: HttpResponse, user_id: int) -> Callable:
-    # if request.method == 'GET':
-    #     title = request.GET.get('search_box', None)
-    #     # date = data_by_form['date']
-    # reminds = Remind.objects.filter(title=title).all()
-    if request.method == 'GET':
-        title = request.GET.get('q')
-        print(title)
-        reminds = Remind.objects.filter(title__icontains=title).all()
-    mes = 'По Вашему запросу ничего не найдено'
-    return get_reminds(request, user_id, reminds, mes)
-    # else:
-    #     form = SearchRemindTitleForm()
-    # context = {'date_dict': show_calendar(),
-    #            'user_id': user_id,
-    #            'form': form,
-    #            'menu': menu}
-    # return render(request, 'planning_app/base.html', context=context)
+@check_authorization
+def search_by_date(request: HttpResponse, user_id: int) -> Callable:
+    if request.method == 'POST':
+        form = SearchRemindDateForm(request.POST)
+        if form.is_valid():
+            data_by_form = form.cleaned_data
+            start_date = data_by_form['start_date']
+            end_date = data_by_form['end_date']
+            reminds = Remind.objects.filter(
+                user_id=user_id, date__range=[start_date, end_date]).all()
+            mes = 'По Вашему запросу ничего не найдено'
+            title_templ = f'Найдено с {start_date} по {end_date}:'
+            return get_reminds(request, user_id, reminds, mes, title_templ)
+    else:
+        form = SearchRemindDateForm()
+        reminds = None
+    return redirect('search_by_date', user_id=user_id)

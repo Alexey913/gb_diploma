@@ -8,24 +8,34 @@ from django.db import models
 
 from django import forms
 
+from django.db.models.query import QuerySet
 
 from abstract_app.views import menu, check_authorization, get_data_with_verbose_name
 
 from .models import Contact, Phone, Email
-from .forms import ContactForm, PhoneForm, EmailForm
+from .forms import ContactForm, PhoneForm, EmailForm, SearchContactForm
 
 
 logger = logging.getLogger(__name__)
 
 
-@check_authorization
-def get_contacts(request: HttpResponse, user_id: int) -> HttpResponse:
-    contacts = Contact.objects.filter(user_id=user_id).all()
+def abstract_list_contacts(request: HttpResponse, user_id: int,
+                           contacts: QuerySet, mes: str, title: str) -> HttpResponse:
     context = {'title': 'Контакты',
                'user_id': user_id,
                'contacts': contacts,
+               'mes': mes,
+               'title': title,
                'menu': menu}
     return render(request, 'contacts_app/contacts.html', context=context)
+
+
+@check_authorization
+def get_contacts(request: HttpResponse, user_id: int) -> Callable:
+    contacts = Contact.objects.filter(user_id=user_id).all()
+    mes = 'По Вашему запросу ничего не найдено'
+    title = 'Список контактов'
+    return abstract_list_contacts(request, user_id, contacts, mes, title)
 
 
 @check_authorization
@@ -231,18 +241,9 @@ def change_contact(request: HttpResponse, user_id: int, contact_id: int) -> Http
         form = ContactForm(request.POST)
         if form.is_valid():
             data_by_form = form.cleaned_data
-            current_contact.surname = \
-                data_by_form['surname'] or current_contact.surname
-            current_contact.name = \
-                data_by_form['name'] or current_contact.name
-            current_contact.patronymic = \
-                data_by_form['patronymic'] or current_contact.patronymic
-            current_contact.organization = \
-                data_by_form['organization'] or current_contact.organization
-            current_contact.birthday = \
-                data_by_form['birthday'] or current_contact.birthday
-            current_contact.place_residense = \
-                data_by_form['place_residense'] or current_contact.place_residense
+            for field, value in data_by_form.items():
+                if value:
+                    setattr(current_contact, field, value)
             current_contact.save()
             logger.info(f"Изменение данных о контакте {contact_id} \
 пользователя {user_id}")
@@ -276,3 +277,22 @@ def del_contact(request: HttpResponse, user_id: int, contact_id: int) -> HttpRes
         messages.error(request, "Данных не сущствует")
     finally:
         return redirect('contacts', user_id=user_id)
+    
+
+def inject_form(request):
+    return {"search_form":SearchContactForm()}
+
+@check_authorization
+def search(request, user_id):
+    if request.method == 'POST':
+        form = SearchContactForm(request.POST)
+        if form.is_valid():
+            contact = form.cleaned_data['contact']
+            contacts = Contact.objects.filter(
+                user_id=user_id, name__contains=contact).all()
+            mes = 'По Вашему запросу ничего не найдено'
+            title_templ = f'Найдено по запросу {contact}:'
+            return abstract_list_contacts(request, user_id, contacts, mes, title_templ)
+    else:
+        form = SearchContactForm()
+    return redirect('search', user_id=user_id)

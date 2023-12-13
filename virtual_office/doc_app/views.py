@@ -11,7 +11,7 @@ from abstract_app.views import documents, menu, check_authorization, \
 
 from .models import Children, DriverCategory, Passport, Inn, \
     Snils, DriverLicense, MilitaryTicket, \
-    ForeignPassport, Spouce, People, DriverCategoryShedule
+    ForeignPassport, Spouce, People, DriverCategoryShedule, Document
 
 from .forms import PassportForm, InnForm, DriverLicenseForm, \
     ForeignPassportForm, MilitaryTicketForm, \
@@ -180,60 +180,6 @@ def add_spouce(request: HttpResponse, user_id: int) -> Callable:
 def add_children(request: HttpResponse, user_id: int) -> Callable:
     return add_people(request, user_id, 'new_children', ChildrenForm, 'детях')
 
-# @check_authorization
-# def add_spouce(request: HttpResponse, user_id: int) -> HttpResponse:
-#     if request.method == 'POST':
-#         form = SpouceForm(request.POST)
-#         if form.is_valid():
-#             spouce = form.save(commit=False)
-#             if spouce.name or spouce.surname or \
-#                     spouce.patronymic or spouce.birthday or \
-#                     spouce.gender or spouce.date_marriage:
-#                 spouce.passport_id = user_id
-#                 spouce.save()
-#                 Passport.objects.filter(
-#                     user_id=user_id).first().spouce = spouce
-#                 logger.info(
-#                     f"Сохранение данных о супруге пользователя {user_id}")
-#                 messages.success(request, "Данные о супруге добавлены")
-#                 return redirect('passport', user_id=user_id)
-#             logger.debug(
-#                 f"Ошибка сохранения данных о супруге пользователя {user_id}")
-#             messages.error(request, "Необходимо заполнить хотя бы одно поле")
-#     else:
-#         form = SpouceForm()
-#     context = {'form': form,
-#                'title': 'Данные о супруге',
-#                'user_id': user_id,
-#                'menu': menu}
-#     return render(request, 'doc_app/edit_spouce.html', context)
-
-
-# @check_authorization
-# def add_children(request: HttpResponse, user_id: int) -> HttpResponse:
-#     if request.method == 'POST':
-#         form = ChildrenForm(request.POST)
-#         if form.is_valid():
-#             children = form.save(commit=False)
-#             if children.name or children.surname or \
-#                     children.patronymic or children.birthday or children.gender:
-#                 children.save()
-#                 Passport.objects.filter(
-#                     user_id=user_id).first().children_set.add(children)
-#                 logger.info(
-#                     f"Сохранение данных о детях пользователя {user_id}")
-#                 messages.success(request, "Данные о детях добавлены")
-#                 return redirect('show_children', user_id=user_id)
-#             logger.debug(
-#                 f"Ошибка сохранения данных о детях пользователя {user_id}")
-#             messages.error(request, "Необходимо заполнить хотя бы одно поле")
-#     else:
-#         form = ChildrenForm()
-#     context = {'form': form,
-#                'title': 'Данные о детях',
-#                'user_id': user_id,
-#                'menu': menu}
-#     return render(request, 'doc_app/new_children.html', context)
 
 @check_authorization
 def change_spouce(request: HttpResponse, user_id: int) -> HttpResponse:
@@ -261,29 +207,6 @@ def change_spouce(request: HttpResponse, user_id: int) -> HttpResponse:
     return render(request, 'doc_app/edit_spouce.html', context)
 
 
-@check_doc(Passport, 'change_passport')
-@check_authorization
-def edit_spouce(request: HttpResponse, user_id: int) -> Callable:
-    if Spouce.objects.filter(passport_id=user_id).first():
-        return change_spouce(request, user_id)
-    messages.debug(request, "Данные о супруге отсутствуют")
-    return add_spouce(request, user_id)
-
-
-@check_authorization
-def del_spouce(request: HttpResponse, user_id: int) -> HttpResponse:
-    try:
-        Spouce.objects.filter(passport_id=user_id).delete()
-        logger.info(f"Удалены данные о супруге пользователя {user_id}")
-        messages.success(request, "Данные успешно удалены")
-    except:
-        logger.debug(
-            f"Ошибка удаления данных о супруге пользователя {user_id}")
-        messages.error(request, "Данных не сущствует")
-    finally:
-        return redirect('passport', user_id=user_id)
-
-
 @check_authorization
 def change_children(request: HttpResponse, user_id: int, children_id: int) -> HttpResponse:
     current_children = Children.objects.filter(pk=children_id).first()
@@ -308,6 +231,15 @@ def change_children(request: HttpResponse, user_id: int, children_id: int) -> Ht
     return render(request, 'doc_app/edit_children.html', context)
 
 
+@check_doc(Passport, 'change_passport')
+@check_authorization
+def edit_spouce(request: HttpResponse, user_id: int) -> Callable:
+    if Spouce.objects.filter(passport_id=user_id).first():
+        return change_spouce(request, user_id)
+    messages.debug(request, "Данные о супруге отсутствуют")
+    return add_spouce(request, user_id)
+
+
 @check_authorization
 def show_childrens_for_change(request: HttpResponse, user_id: int) -> HttpResponse:
     childrens = Passport.objects.filter(pk=user_id).first().children_set.all()
@@ -327,6 +259,20 @@ def edit_children(request: HttpResponse, user_id: int) -> Callable:
 
 
 @check_authorization
+def del_spouce(request: HttpResponse, user_id: int) -> HttpResponse:
+    try:
+        Spouce.objects.filter(passport_id=user_id).delete()
+        logger.info(f"Удалены данные о супруге пользователя {user_id}")
+        messages.success(request, "Данные успешно удалены")
+    except:
+        logger.debug(
+            f"Ошибка удаления данных о супруге пользователя {user_id}")
+        messages.error(request, "Данных не сущствует")
+    finally:
+        return redirect('passport', user_id=user_id)
+
+
+@check_authorization
 def del_children(request: HttpResponse, user_id: int, children_id: int) -> HttpResponse:
     try:
         Children.objects.filter(pk=children_id).delete()
@@ -338,6 +284,20 @@ def del_children(request: HttpResponse, user_id: int, children_id: int) -> HttpR
         messages.error(request, "Данных не сущствует")
     finally:
         return redirect('passport', user_id=user_id)
+
+
+@check_doc(Snils, 'change_snils')
+@check_authorization
+def get_snils(request: HttpResponse, user_id: int) -> HttpResponse:
+    list_fields = ['number', 'date_registration',
+                   'id_inspection', 'name_inspection']
+    context = get_document(Snils, user_id, list_fields)
+    context_to_template = {'context': context,
+                           'title': 'CНИЛС',
+                           'user_id': user_id,
+                           'view': 'change_snils',
+                           'menu': menu}
+    return render(request, 'doc_app/base_doc.html', context=context_to_template)
 
 
 @check_doc(Inn, 'change_inn')
@@ -355,97 +315,94 @@ def get_inn(request: HttpResponse, user_id: int) -> HttpResponse:
     return render(request, 'doc_app/base_doc.html', context=context_to_template)
 
 
+@check_doc(ForeignPassport, 'change_foreign_passport')
 @check_authorization
-def change_inn(request: HttpResponse, user_id: int) -> HttpResponse:
-    if request.method == 'POST':
-        form = InnForm(request.POST)
-        if form.is_valid():
-            current_inn = Inn.objects.filter(
-                user_id=user_id).first()
-            if current_inn:
-                data_by_form = form.cleaned_data
-                current_inn.series = \
-                    data_by_form['series'] or current_inn.series
-                current_inn.number = \
-                    data_by_form['number'] or current_inn.number
-                current_inn.date_registration = \
-                    data_by_form['date_registration'] or current_inn.date_registration
-                current_inn.id_inspection = \
-                    data_by_form['id_inspection'] or current_inn.id_inspection
-                current_inn.name_inspection = \
-                    data_by_form['name_inspection'] or current_inn.name_inspection
-                current_inn.inn = data_by_form['inn'] or current_inn.inn
-                current_inn.save()
-            else:
-                inn = form.save(commit=False)
-                inn.user_id = user_id
-                inn.save()
-            messages.success(request, "Данные ИНН успешно изменены")
-            logger.info(f"Сохранение ИНН пользователя {user_id}")
-            return redirect('inn', user_id=user_id)
-        logger.debug(
-            f"Ошибка сохранения паспортных данных пользователя {user_id}")
-        messages.error(request, "Неверные данные")
-    else:
-        form = InnForm()
-    context = {'form': form,
-               'title': 'Изменение данных ИНН',
-               'view': 'change_inn',
-               'user_id': user_id,
-               'menu': menu}
-    return render(request, 'doc_app/base_change_doc.html', context=context)
-
-
-@check_doc(Snils, 'change_snils')
-@check_authorization
-def get_snils(request: HttpResponse, user_id: int) -> HttpResponse:
-    list_fields = ['number', 'date_registration',
-                   'id_inspection', 'name_inspection']
-    context = get_document(Snils, user_id, list_fields)
+def get_foreign_passport(request: HttpResponse, user_id: int) -> HttpResponse:
+    list_fields = ['series', 'number', 'date_registration',
+                   'id_inspection', 'name_inspection', 'foreign_name',
+                   'foreign_surname', 'date_end_action']
+    context = get_document(ForeignPassport, user_id, list_fields)
     context_to_template = {'context': context,
-                           'title': 'CНИЛС',
+                           'title': 'Заграничный паспорт',
+                           'view': 'change_foreign_passport',
                            'user_id': user_id,
-                           'view': 'change_snils',
+                           'menu': menu}
+    return render(request, 'doc_app/base_doc.html', context=context_to_template)
+
+
+@check_doc(MilitaryTicket, 'change_military_ticket')
+@check_authorization
+def get_military_ticket(request: HttpResponse, user_id: int) -> HttpResponse:
+    list_fields = ['series', 'number', 'date_registration',
+                   'id_inspection', 'name_inspection', 'category',
+                   'speciality', 'description']
+    context = get_document(MilitaryTicket, user_id, list_fields)
+    context_to_template = {'context': context,
+                           'title': 'Военыый билет',
+                           'view': 'change_military_ticket',
+                           'user_id': user_id,
                            'menu': menu}
     return render(request, 'doc_app/base_doc.html', context=context_to_template)
 
 
 @check_authorization
-def change_snils(request: HttpResponse, user_id: int) -> HttpResponse:
+def change_doc(request: HttpResponse, user_id: int, type_form: forms.ModelForm,
+               entity: Document, title:str, kind: str, mes_error: str) -> HttpResponse:
     if request.method == 'POST':
-        form = SnilsForm(request.POST)
+        form = type_form(request.POST)
         if form.is_valid():
-            current_inn = Snils.objects.filter(
+            current_doc = entity.objects.filter(
                 user_id=user_id).first()
-            if current_inn:
+            if current_doc:
                 data_by_form = form.cleaned_data
-                current_inn.number = \
-                    data_by_form['number'] or current_inn.number
-                current_inn.date_registration = \
-                    data_by_form['date_registration'] or current_inn.date_registration
-                current_inn.id_inspection = \
-                    data_by_form['id_inspection'] or current_inn.id_inspection
-                current_inn.name_inspection = \
-                    data_by_form['name_inspection'] or current_inn.name_inspection
-                current_inn.save()
+                for field, value in data_by_form.items():
+                    if value:
+                        setattr(current_doc, field, value)
+                current_doc.save()
             else:
-                inn = form.save(commit=False)
-                inn.user_id = user_id
-                inn.save()
-            messages.success(request, "Данные СНИЛС успешно изменены")
-            logger.info(f"Сохранение СНИЛС пользователя {user_id}")
-            return redirect('snils', user_id=user_id)
+                doc = form.save(commit=False)
+                doc.user_id = user_id
+                doc.save()
+            messages.success(request,
+                             f"Данные документа {title} успешно изменены")
+            logger.info(f"Сохранение {title} пользователя {user_id}")
+            return redirect(kind, user_id=user_id)
         logger.debug(
-            f"Ошибка сохранения паспортных данных пользователя {user_id}")
-        messages.error(request, "Неверные данные")
+            f"Ошибка сохранения данных {title} пользователя {user_id}")
+        messages.error(request, mes_error)
     else:
-        form = SnilsForm()
+        form = type_form()
     context = {'form': form,
-               'title': 'Изменение данных СНИЛС',
-               'view': 'change_snils',
+               'title': f'Изменение документа {title}',
+               'view': 'change_'+kind,
                'user_id': user_id,
                'menu': menu}
     return render(request, 'doc_app/base_change_doc.html', context=context)
+
+
+@check_authorization
+def change_inn(request: HttpResponse, user_id: int) -> Callable:
+    return change_doc(request, user_id, InnForm, Inn,
+                      'ИНН', 'inn', 'Введите корректный номер ИНН')
+
+
+@check_authorization
+def change_snils(request: HttpResponse, user_id: int) -> Callable:
+    return change_doc(request, user_id, SnilsForm, Snils,
+                      'СНИЛС', 'snils', 'Введите корректный номер СНИЛС')
+
+
+@check_authorization
+def change_foreign_passport(request: HttpResponse, user_id: int) -> Callable:
+    return change_doc(request, user_id, ForeignPassportForm, ForeignPassport,
+                      'Заграничный паспорт', 'foreign_passport',
+                      'Проверьте дату окончания действия или исправьте фамилию/имя на латиницу')
+
+
+@check_authorization
+def change_military_ticket(request: HttpResponse, user_id: int) -> Callable:
+    return change_doc(request, user_id, MilitaryTicketForm, MilitaryTicket,
+                      'Военный билет', 'military_ticket', 'Неверные данные')
 
 
 @check_authorization
@@ -506,12 +463,9 @@ def change_driver_category(request: HttpResponse, user_id: int, category_id: int
         form = DriverCategoryEditForm(request.POST)
         if form.is_valid():
             data_by_form = form.cleaned_data
-            current_shedule_cat.date_begin = \
-                data_by_form['date_begin'] or current_shedule_cat.date_begin
-            current_shedule_cat.date_end = \
-                data_by_form['date_end'] or current_shedule_cat.date_end
-            current_shedule_cat.note = \
-                data_by_form['note'] or current_shedule_cat.note
+            for field, value in data_by_form.items():
+                if value:
+                    setattr(current_shedule_cat, field, value)
             current_shedule_cat.save()
             logger.info(
                 f"Изменение данных о водительской категории {category_id} пользователя {user_id}")
@@ -587,22 +541,9 @@ def change_driver_license(request: HttpResponse, user_id: int) -> HttpResponse:
                 user_id=user_id).first()
             if current_license:
                 data_by_form = form.cleaned_data
-                current_license.series = \
-                    data_by_form['series'] or current_license.series
-                current_license.number = \
-                    data_by_form['number'] or current_license.number
-                current_license.date_registration = \
-                    data_by_form['date_registration'] or current_license.date_registration
-                current_license.id_inspection = \
-                    data_by_form['id_inspection'] or current_license.id_inspection
-                current_license.name_inspection = \
-                    data_by_form['name_inspection'] or current_license.name_inspection
-                current_license.date_end_action = \
-                    data_by_form['date_end_action'] or current_license.date_end_action
-                current_license.date_start_expirience = \
-                    data_by_form['date_start_expirience'] or current_license.date_start_expirience
-                current_license.special_marks = \
-                    data_by_form['special_marks'] or current_license.special_marks
+                for field, value in data_by_form:
+                    if value and value != 'categories':
+                        setattr(current_license, field, value)
                 categories = data_by_form['categories']
                 if categories:
                     current_license.categories.set(categories)
@@ -625,126 +566,3 @@ def change_driver_license(request: HttpResponse, user_id: int) -> HttpResponse:
                'user_id': user_id,
                'menu': menu}
     return render(request, 'doc_app/change_driver_license.html', context=context)
-
-
-@check_doc(ForeignPassport, 'change_foreign_passport')
-@check_authorization
-def get_foreign_passport(request: HttpResponse, user_id: int) -> HttpResponse:
-    list_fields = ['series', 'number', 'date_registration',
-                   'id_inspection', 'name_inspection', 'foreign_name',
-                   'foreign_surname', 'date_end_action']
-    context = get_document(DriverLicense, user_id, list_fields)
-    context_to_template = {'context': context,
-                           'title': 'Заграничный паспорт',
-                           'view': 'change_foreign_passport',
-                           'user_id': user_id,
-                           'menu': menu}
-    return render(request, 'doc_app/base_doc.html', context=context_to_template)
-
-
-@check_authorization
-def change_foreign_passport(request: HttpResponse, user_id: int) -> HttpResponse:
-    if request.method == 'POST':
-        form = ForeignPassportForm(request.POST)
-        if form.is_valid():
-            current_foreign_pass = ForeignPassport.objects.filter(
-                user_id=user_id).first()
-            if current_foreign_pass:
-                data_by_form = form.cleaned_data
-                current_foreign_pass.series = \
-                    data_by_form['series'] or current_foreign_pass.series
-                current_foreign_pass.number = \
-                    data_by_form['number'] or current_foreign_pass.number
-                current_foreign_pass.date_registration = \
-                    data_by_form['date_registration'] or current_foreign_pass.date_registration
-                current_foreign_pass.id_inspection = \
-                    data_by_form['id_inspection'] or current_foreign_pass.id_inspection
-                current_foreign_pass.name_inspection = \
-                    data_by_form['name_inspection'] or current_foreign_pass.name_inspection
-                current_foreign_pass.date_end_action = \
-                    data_by_form['date_end_action'] or current_foreign_pass.date_end_action
-                current_foreign_pass.foreign_name = \
-                    data_by_form['foreign_name'] or current_foreign_pass.foreign_name
-                current_foreign_pass.foreign_surname = \
-                    data_by_form['foreign_surname'] or current_foreign_pass.foreign_surname
-                current_foreign_pass.save()
-            else:
-                foreign_pass = form.save(commit=False)
-                foreign_pass.user_id = user_id
-                foreign_pass.save()
-            messages.success(request,
-                             "Данные о заграничном паспорте успешно изменены")
-            logger.info(
-                f"Сохранение данных о загранпаспорте пользователя {user_id}")
-            return redirect('foreign_passport', user_id=user_id)
-        logger.debug(
-            f"Ошибка сохранения данных о загранпаспорте пользователя {user_id}")
-        messages.error(request, "Неверные данные")
-    else:
-        form = ForeignPassportForm()
-    context = {'form': form,
-               'title': 'Изменение данных о загарничном паспорте',
-               'view': 'change_foreign_passport',
-               'user_id': user_id,
-               'menu': menu}
-    return render(request, 'doc_app/base_change_doc.html', context=context)
-
-
-@check_doc(MilitaryTicket, 'change_military_ticket')
-@check_authorization
-def get_military_ticket(request: HttpResponse, user_id: int) -> HttpResponse:
-    list_fields = ['series', 'number', 'date_registration',
-                   'id_inspection', 'name_inspection', 'category',
-                   'speciality', 'description']
-    context = get_document(MilitaryTicket, user_id, list_fields)
-    context_to_template = {'context': context,
-                           'title': 'Военыый билет',
-                           'view': 'change_military_ticket',
-                           'user_id': user_id,
-                           'menu': menu}
-    return render(request, 'doc_app/base_doc.html', context=context_to_template)
-
-
-@check_authorization
-def change_military_ticket(request: HttpResponse, user_id: int) -> HttpResponse:
-    if request.method == 'POST':
-        form = MilitaryTicketForm(request.POST)
-        if form.is_valid():
-            current_ticket = MilitaryTicket.objects.filter(
-                user_id=user_id).first()
-            if current_ticket:
-                data_by_form = form.cleaned_data
-                current_ticket.series = \
-                    data_by_form['series'] or current_ticket.series
-                current_ticket.number = \
-                    data_by_form['number'] or current_ticket.number
-                current_ticket.date_registration = \
-                    data_by_form['date_registration'] or current_ticket.date_registration
-                current_ticket.id_inspection = \
-                    data_by_form['id_inspection'] or current_ticket.id_inspection
-                current_ticket.name_inspection = \
-                    data_by_form['name_inspection'] or current_ticket.name_inspection
-                current_ticket.category = data_by_form['category'] or current_ticket.category
-                current_ticket.speciality = \
-                    data_by_form['speciality'] or current_ticket.speciality
-                current_ticket.description = \
-                    data_by_form['description'] or current_ticket.description
-                current_ticket.save()
-            else:
-                ticket = form.save(commit=False)
-                ticket.user_id = user_id
-                ticket.save()
-            messages.success(request,
-                             "Данные о военном билете успешно изменены")
-            logger.info(f"Сохранение данных о военном билете {user_id}")
-            return redirect('military_ticket', user_id=user_id)
-        logger.debug(f"Ошибка сохранения данных о военном билете {user_id}")
-        messages.error(request, "Неверные данные")
-    else:
-        form = MilitaryTicketForm()
-    context = {'form': form,
-               'title': 'Изменение данных о военном билете',
-               'view': 'change_military_ticket',
-               'user_id': user_id,
-               'menu': menu}
-    return render(request, 'doc_app/base_change_doc.html', context=context)

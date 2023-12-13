@@ -51,3 +51,10 @@ class ContactForm(forms.ModelForm):
                    'organization': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Организация'}),
                    'birthday': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
                    'place_residense': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Адрес'}), }
+
+class SearchContactForm(forms.Form):
+
+    contact = forms.CharField(max_length=50, min_length=2,
+                                error_messages={'required': 'Заполните поле поиска'},
+                                widget=forms.TextInput(attrs={
+                                    'class': 'form-control', 'placeholder': 'Контакт'}))
