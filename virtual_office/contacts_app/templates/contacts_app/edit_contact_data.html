@@ -28,7 +28,9 @@
         <br>
         <input class="c-button" type="submit" value="Изменить данные">
         </form>
-        <br><br>
+        <br>
+        <a href="{% url 'show_contact' user_id contact_id %}"> <h3>Отмена</h3> </a>
+        <br>
         <a href="{% url del_note user_id contact_id change_pk %}"> <h3>Удалить {{ note }} </h3> </a>
 </div>
 

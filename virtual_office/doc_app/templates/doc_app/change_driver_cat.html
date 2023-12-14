@@ -13,17 +13,17 @@
         {% csrf_token %}
         <table cellpadding="3">
             {% for f in form %}
-                <tr>
-                    <td align="left">
-                        <label for="{{ f.id_for_label }}">{{f.label}}: </label>
-                    </td>
-                    <td> {{ f }} </td>
-                </tr>
-                <tr>
-                    <td colspan="2" align="right">
-                        <font color="aa0100">{{ f.errors }}</font>
-                    </td>
-                </tr>
+            <tr>
+                <td align="left">
+                    <label for="{{ f.id_for_label }}">{{f.label}}: </label>
+                </td>
+                <td> {{ f }} </td>
+            </tr>
+            <tr>
+                <td colspan="2" align="right">
+                    <font color="aa0100">{{ f.errors }}</font>
+                </td>
+            </tr>
             {% endfor %}
         </table>
         <br>

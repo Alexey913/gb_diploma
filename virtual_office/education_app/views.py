@@ -109,28 +109,10 @@ def change_diploma(request: HttpResponse, user_id: int, diploma_id: int) -> Http
         form = DiplomaForm(request.POST)
         if form.is_valid():
             data_by_form = form.cleaned_data
-            current_diploma.name = \
-                data_by_form['name'] or current_diploma.name
-            current_diploma.series = \
-                data_by_form['series'] or current_diploma.series
-            current_diploma.number = \
-                data_by_form['number'] or current_diploma.number
-            current_diploma.date_registration = \
-                data_by_form['date_registration'] or current_diploma.date_registration
-            current_diploma.registration_number = \
-                data_by_form['registration_number'] or current_diploma.registration_number
-            current_diploma.name_institution = \
-                data_by_form['name_institution'] or current_diploma.name_institution
-            current_diploma.year_of_start_edu = \
-                data_by_form['year_of_start_edu'] or current_diploma.year_of_start_edu
-            current_diploma.year_of_finish_edu = \
-                data_by_form['year_of_finish_edu'] or current_diploma.year_of_finish_edu
-            current_diploma.spiciality = \
-                data_by_form['spiciality'] or current_diploma.spiciality
-            current_diploma.spicialization = \
-                data_by_form['spicialization'] or current_diploma.spicialization
-            current_diploma.description = \
-                data_by_form['description'] or current_diploma.description
+            for field, value in data_by_form.items():
+                if value:
+                    setattr(current_diploma, field, value)
+            current_diploma.save()
             logger.info(f"Изменение данных о дипломе {diploma_id} пользователя {user_id}")
             messages.success(request, "Данные успешно изменены")
             return redirect('education', user_id=user_id)

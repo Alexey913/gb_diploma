@@ -83,25 +83,6 @@ class SnilsForm(DocForm):
 
 class DriverLicenseForm(DocForm):
 
-    def clean_date_start_expirience(self):
-        super().clean()
-        date_start_expirience = self.cleaned_data['date_start_expirience']
-        date_registration = self.cleaned_data['date_registration']
-        if date_start_expirience and date_start_expirience > date.today():
-            raise ValidationError('Дата не должна быть позже сегодняшней')
-        if date_start_expirience and date_registration < date_start_expirience:
-            raise ValidationError(
-                'Дата начала стажа не должна быть больше даты выдачи ВУ')   
-        return date_start_expirience
-
-    def clean_date_end_action(self):
-        super().clean()
-        date_start_expirience = self.cleaned_data['date_start_expirience']
-        date_end_action = self.cleaned_data['date_end_action']
-        if date_end_action and date_end_action < date_start_expirience:
-            raise ValidationError('Дата окончания действия ВУ не должна быть меьше даты начала стажа')   
-        return date_end_action
-
     class Meta(DocForm.Meta):
         model = DriverLicense
         fields = DocForm.Meta.fields + \
@@ -119,6 +100,19 @@ class DriverLicenseForm(DocForm):
 
 
 class DriverCategoryEditForm(forms.ModelForm):
+        
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    class Meta(DocForm.Meta):
+        model = DriverCategoryShedule
+        fields = ['date_begin', 'date_end', 'note']
+        widgets = {
+            'date_begin': forms.DateInput(attrs={'class': 'form-control', 'type':'date'}),
+            'date_end': forms.DateInput(attrs={'class': 'form-control', 'type':'date'}),
+            'note': forms.TextInput(attrs={'class':'form-control',
+                                                   'placeholder': 'Отметка о категории'}),
+        }
 
     def clean_date_begin(self):
         super().clean()
@@ -136,15 +130,6 @@ class DriverCategoryEditForm(forms.ModelForm):
                 'Дата окончания стажа не должна быть меньше даты начала')        
         return date_end
 
-    class Meta(DocForm.Meta):
-        model = DriverCategoryShedule
-        fields = ['date_begin', 'date_end', 'note']
-        widgets = {
-            'date_begin': forms.DateInput(attrs={'class': 'form-control', 'type':'date'}),
-            'date_end': forms.DateInput(attrs={'class': 'form-control', 'type':'date'}),
-            'note': forms.TextInput(attrs={'class':'form-control',
-                                                   'placeholder': 'Отметка о категории'}),
-        }
 
 class DriverCategoryAddForm(DriverCategoryEditForm):
     def __init__(self, *args, **kwargs):

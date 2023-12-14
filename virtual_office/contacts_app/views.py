@@ -1,3 +1,4 @@
+from itertools import chain
 import logging
 from typing import Callable
 
@@ -33,7 +34,7 @@ def abstract_list_contacts(request: HttpResponse, user_id: int,
 @check_authorization
 def get_contacts(request: HttpResponse, user_id: int) -> Callable:
     contacts = Contact.objects.filter(user_id=user_id).all()
-    mes = 'По Вашему запросу ничего не найдено'
+    mes = 'Список контактов пуст'
     title = 'Список контактов'
     return abstract_list_contacts(request, user_id, contacts, mes, title)
 
@@ -48,8 +49,7 @@ def show_contact(request: HttpResponse, user_id: int, contact_id: int) -> HttpRe
     output_contact = get_data_with_verbose_name(object_contact, contact)
     phones = Phone.objects.filter(contact_id=contact_id).all()
     emails = Email.objects.filter(contact_id=contact_id).all()
-    title = f'Контакт: {output_contact}'
-    context = {'title': title,
+    context = {'title': 'Сведения о контакте',
                'user_id': user_id,
                'contact_id': contact_id,
                'contact': output_contact,
@@ -288,8 +288,16 @@ def search(request, user_id):
         form = SearchContactForm(request.POST)
         if form.is_valid():
             contact = form.cleaned_data['contact']
-            contacts = Contact.objects.filter(
-                user_id=user_id, name__contains=contact).all()
+            name_search = Contact.objects.filter(name__icontains=contact, user_id=user_id).all()
+            suname_search = Contact.objects.filter(surname__icontains=contact, user_id=user_id).all()
+            patronymic_search = Contact.objects.filter(
+                patronymic__icontains=contact, user_id=user_id).all()
+            organization_search = Contact.objects.filter(
+                organization__icontains=contact, user_id=user_id).all()
+            place_rsidense_search = Contact.objects.filter(
+                place_residense__icontains=contact, user_id=user_id).all()
+            contacts = list(chain(name_search, suname_search,
+                                     patronymic_search, organization_search, place_rsidense_search))
             mes = 'По Вашему запросу ничего не найдено'
             title_templ = f'Найдено по запросу {contact}:'
             return abstract_list_contacts(request, user_id, contacts, mes, title_templ)

@@ -82,7 +82,7 @@ def func_for_add_repeat_events(remind:Remind, func: Callable, delta: int, period
     current_day = remind.date
     end_date=datetime(year=end_date_year-delta, month=1, day=1)
     for dt in rrule.rrule(func, dtstart=current_day, until=end_date):
-            Remind.objects.bulk_create(title=remind.title,
+            Remind.objects.create(title=remind.title,
                                         date=dt, time=remind.time,
                                         all_day=remind.all_day,
                                         repeat=period,
@@ -215,7 +215,7 @@ def search_by_title(request: HttpResponse, user_id: int) -> Callable:
             data_by_form = form.cleaned_data
             title = data_by_form['title']
             reminds = Remind.objects.filter(
-                user_id=user_id, title__contains=title).all()
+                user_id=user_id, title__icontains=title).all()
             mes = 'По Вашему запросу ничего не найдено'
             title_templ = f'Найдено по названию {title}:'
             return get_reminds(request, user_id, reminds, mes, title_templ)

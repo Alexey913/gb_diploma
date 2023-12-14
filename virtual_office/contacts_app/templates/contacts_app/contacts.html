@@ -7,12 +7,6 @@
         <table cellpadding="3">
             <tr>
                 <td>
-                    <a href="{% url 'add_contact' user_id %}"> <h3>Добавить запись</h3> </a>
-                <br><br>
-                </td>
-            </tr>
-            <tr>
-                <td>
                 {% if contacts %}
                 <font size="5"><b>
                     {% for contact in contacts %}
@@ -32,5 +26,19 @@
             </tr>
         </table>
 </div>
+
+{% endblock %}
+
+
+{% block information %}
+
+        <table cellpadding="3">
+            <tr>
+                <td>
+                    <a href="{% url 'add_contact' user_id %}"> <h2>Добавить запись</h2> </a>
+                <br><br>
+                </td>
+            </tr>
+        </table>
 
 {% endblock %}

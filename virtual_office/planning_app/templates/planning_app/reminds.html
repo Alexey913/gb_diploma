@@ -7,7 +7,7 @@
         <tr><td>
         <table align="left" cellpadding="3">
             <tr><td>
-                <a href="{% url 'add_remind' user_id %}"><h3>Добавить событие</h3></a>
+                <a href="{% url 'add_remind' user_id %}"><h2>Добавить событие</h2></a>
             <br><br>    
             </td>
             </tr>
@@ -15,8 +15,7 @@
                     {% for remind in reminds %}
                     <tr>
                         <td>
-                        <a href="{% url 'show_remind' user_id remind.pk %}"><font size="5"><b>{{ remind.title }}</b></font></a>
-                        <br><br>
+                        <a href="{% url 'show_remind' user_id remind.pk %}"><font size="4"><b>{{ remind.title }} | {{ remind.date }}</b></font></a>
                         </td>
                     </tr>
                 {% endfor %}

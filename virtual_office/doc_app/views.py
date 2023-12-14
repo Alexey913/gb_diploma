@@ -98,9 +98,10 @@ def get_passport(request: HttpResponse, user_id: int) -> HttpResponse:
     context_to_template = {'context': context,
                            'spouce': spouce,
                            'childrens': childrens,
-                           'title': 'Данные пользователя',
+                           'title': 'Паспорт',
                            'user_id': user_id,
                            'user': get_user_by_id(user_id),
+                           'view': 'change_passport',
                            'menu': menu}
     return render(request, 'doc_app/passport.html', context=context_to_template)
 
@@ -351,7 +352,7 @@ def get_military_ticket(request: HttpResponse, user_id: int) -> HttpResponse:
                    'speciality', 'description']
     context = get_document(MilitaryTicket, user_id, list_fields)
     context_to_template = {'context': context,
-                           'title': 'Военыый билет',
+                           'title': 'Военный билет',
                            'view': 'change_military_ticket',
                            'user_id': user_id,   
                            'user': get_user_by_id(user_id),
@@ -495,6 +496,7 @@ def change_driver_category(request: HttpResponse, user_id: int, category_id: int
                'title':
                f'Категория {DriverCategory.objects.filter(pk=category_id).first().name}',
                'user_id': user_id,
+               'user': get_user_by_id(user_id),
                'shedule_cat': current_shedule_cat,
                'menu': menu}
     return render(request, 'doc_app/edit_driver_cat.html', context)
@@ -506,6 +508,8 @@ def show_categories_for_change(request: HttpResponse, user_id: int) -> HttpRespo
         pk=user_id).first().categories.all().order_by('name')
     context = {'categories': categories,
                'user_id': user_id,
+               'user': get_user_by_id(user_id),
+               'title': 'Открытые категории',
                'menu': menu}
     return render(request, 'doc_app/show_driver_cat.html', context=context)
 
@@ -558,8 +562,8 @@ def change_driver_license(request: HttpResponse, user_id: int) -> HttpResponse:
                 user_id=user_id).first()
             if current_license:
                 data_by_form = form.cleaned_data
-                for field, value in data_by_form:
-                    if value and value != 'categories':
+                for field, value in data_by_form.items():
+                    if value and field != 'categories':
                         setattr(current_license, field, value)
                 categories = data_by_form['categories']
                 if categories:
@@ -574,7 +578,7 @@ def change_driver_license(request: HttpResponse, user_id: int) -> HttpResponse:
             logger.info(f"Сохранение данных о ВУ пользователя {user_id}")
             return redirect('show_driver_categories', user_id=user_id)
         logger.debug(f"Ошибка сохранения данных о ВУ пользователя {user_id}")
-        messages.error(request, "Неверные данные")
+        messages.error(request, "Проверьте соответствие дат")
     else:
         form = DriverLicenseForm()
     context = {'form': form,

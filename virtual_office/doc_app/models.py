@@ -116,9 +116,10 @@ class ForeignPassport(Document):
 class MilitaryTicket(Document):
     category = models.CharField(max_length=40, choices=sorted(
         MILITARY_CATEGORIES), verbose_name='Призывная категория')
-    speciality = models.CharField(
-        max_length=50, verbose_name='Военная специальность')
-    description = models.TextField(verbose_name='Дополнительные сведения')
+    speciality = models.CharField(max_length=50, blank=True, null=True,
+                                  verbose_name='Военная специальность')
+    description = models.TextField(blank=True, null=True,
+                                   verbose_name='Дополнительные сведения')
 
     class Meta:
         db_table = "doc_app_military_ticket"

@@ -6,11 +6,13 @@
 
 {% block content %}
 
-
-<br>
-<table>
-    <tr><td>
-    <table align="left" cellpadding="3">
+<div>
+    <table align="left" cellpadding="3" valign="top">
+        <tr>
+            <td colspan="2">
+                <a href="{% url add_property user.pk %}"> <h2>Добавить {{ title }}</h2> </a>
+            </td>
+        </tr>
         {% for pr in properties %}
             <tr>
                 <td>
@@ -32,14 +34,6 @@
             </tr>
         {% endfor %}
     </table>
-</td></tr>
-        <tr>
-            <td>
-                <a href="{% url add_property user.pk %}"> <h3>Добавить {{ title }}</h3> </a>
-            </td>
-        </tr>
-    </table>
-    <br>
 </div>
 
 {% endblock %}

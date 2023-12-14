@@ -28,12 +28,14 @@
         <br>
         <input class="c-button" type="submit" value="Изменить данные">
     </form>
-    <br><br>
-        <font size="4"><b>
-    <a href="{% url 'edit_spouce' user_id %}"> Изменить сведения о супруге </a>
-    <br><br>
-    <a href="{% url 'edit_children' user_id %}"> Изменить сведения о детях </a>
-    </b></font>
 </div>
 
+{% endblock %}
+
+{% block information %}
+<br><br><br><br><br><br>
+<a href="{% url 'edit_spouce' user_id %}"> Изменить сведения о супруге </a>
+<br><br>
+<a href="{% url 'edit_children' user_id %}"> Изменить сведения о детях </a>
+</b></font>
 {% endblock %}
