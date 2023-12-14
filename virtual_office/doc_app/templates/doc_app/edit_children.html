@@ -1,4 +1,10 @@
 {% extends 'base.html' %}
+
+
+{% block mini_title %}
+    <h1> {{ title }} пользователя {{ user }}</h1>
+{% endblock %}
+
 {% block content %}
 
 
@@ -14,25 +20,27 @@
     <form action="{% url 'change_children' user_id children.pk %}" method="post">
         {% csrf_token %}
         <table cellpadding="3">
-            {% for f in form %}
-                <tr>
-                    <td align="left" width="200">
-                        <label for="{{ f.id_for_label }}">{{f.label}}: </label>
-                    </td>
-                    <td> {{ f }} </td>
-                </tr>
-                <tr>
-                    <td colspan="2" align="right">
-                        <font color="FFAA00">{{ f.errors }}</font>
-                    </td>
-                </tr>
-            {% endfor %}
+        {% for f in form %}
+        <tr>
+            <td align="left">
+                <label for="{{ f.id_for_label }}">{{f.label}}: </label>
+            </td>
+            <td> {{ f }} </td>
+        </tr>
+        <tr>
+            <td colspan="2" align="right">
+                <font color="aa0100">{{ f.errors }}</font>
+            </td>
+        </tr>
+        {% endfor %}
         </table>
         <br>
-        <input class="c-button" type="submit" value="Изменить данные">
-        <br><br>
-        <a href="{% url 'del_children' user_id children.pk %}"> Удалить сведения о ребенке </a>
+        <input class="c-button" type="submit" value="Сохранить данные">
     </form>
+    <br><br>
+    <font size="4"><b>
+        <a href="{% url 'del_children' user_id children.pk %}"><h3>Удалить сведения о ребенке</h3></a>
+    </b></font>
 </div>
 
 {% endblock %}

@@ -6,6 +6,11 @@
     <table>
         <tr><td>
         <table align="left" cellpadding="3">
+            <tr><td>
+                <a href="{% url 'add_remind' user_id %}"><h3>Добавить событие</h3></a>
+            <br><br>    
+            </td>
+            </tr>
                 {% if reminds %}
                     {% for remind in reminds %}
                     <tr>
@@ -24,10 +29,6 @@
                 {% endif %}
             </table>
         </td></tr>
-        <tr><td>
-                <a href="{% url 'add_remind' user_id %}"><h3>Добавить событие</h3></a>
-                </td>
-            </tr>
             <tr><td>
                 <div>
                     <br>

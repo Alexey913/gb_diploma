@@ -1,9 +1,14 @@
 {% extends 'base.html' %}
+
+{% block mini_title %}
+    <h1> {{ title }} пользователя {{ user }} </h1>
+{% endblock %}
+
 {% block content %}
 
 
 <div><h1>
-    {{ title }}
+    {{ title }} - изменить данные
     </h1></div>
     <div>
     <form action="{% url 'change_driver_category' user_id shedule_cat.category_id %}" method="post">
@@ -26,7 +31,7 @@
         <br>
         <input class="c-button" type="submit" value="Изменить данные">
         <br><br>
-        <a href="{% url 'del_driver_category' user_id shedule_cat.category_id %}"> Удалить сведения об открытой категории </a>
+        <a href="{% url 'del_driver_category' user_id shedule_cat.category_id %}"> <h3>Удалить сведения об открытой категории</h3> </a>
     </form>
 </div>
 

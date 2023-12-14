@@ -1,26 +1,30 @@
 {% extends 'base.html' %}
+
+
+{% block mini_title %}
+    <h1>{{ title }} пользователя {{ user }}</h1>
+{% endblock %}
+
+
 {% block content %}
 
-
-    <div><h1>Данные об открытых категориях</h1></div>
     <div>
         <table cellpadding="3">
             {% for cat in categories %}
                 <tr>
-                    <td align="left" width="200">
+                    <td>
                         <a href="{% url 'change_driver_category' user_id cat.pk %}"> 
-                            Категория {{ cat.name }} - {{ cat.description }}
+                            <font size="5"><b>Категория {{ cat.name }} - {{ cat.description }}</b></font>
                         </a>
                     </td>
                 </tr>
             {% endfor %}
             <tr>
                 <td>
-                    <a href="{% url 'add_driver_category' user_id %}"> Добавить водительскую категорию</a>
+                    <a href="{% url 'add_driver_category' user_id %}"> <h3> Добавить водительскую категорию </h3></a>
                 </td>
             </tr>
         </table>
-        <br>
 </div>
 
 {% endblock %}

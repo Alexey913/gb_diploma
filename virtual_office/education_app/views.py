@@ -3,8 +3,10 @@ from typing import Callable
 
 from django.shortcuts import render, redirect, HttpResponse, get_object_or_404
 from django.contrib import messages
+from django.db.models.query import QuerySet
 
-from abstract_app.views import  menu, check_authorization, check_doc, get_data_with_verbose_name
+from abstract_app.views import  menu, check_authorization, get_data_with_verbose_name
+from user_app.models import Data
 
 from .models import Diploma
 from .forms import DiplomaForm
@@ -13,49 +15,42 @@ from .forms import DiplomaForm
 logger = logging.getLogger(__name__)
 
 
+def show_diploma(diploma_id: int) -> dict:
+    diploma = Diploma.objects.filter(pk=diploma_id).first()
+    if diploma:
+        list_fields = ['name','number', 'series',
+                       'date_registration', 'registration_number',
+                       'name_institution', 'year_of_start_edu',
+                       'year_of_finish_edu', 'spiciality',
+                       'spicialization', 'description']
+        dip_instance = Diploma.objects.values(*list_fields).filter(pk=diploma_id).first()
+        object_dip = get_object_or_404(Diploma, pk=diploma_id)
+        return get_data_with_verbose_name(object_dip, dip_instance)
 
-def show_diplomas(user_id: int) -> HttpResponse:
-    diplomas = Diploma.objects.filter(user_id=user_id).all()
+
+def show_diplomas(diplomas: QuerySet) -> HttpResponse:
     if diplomas:
         output_diplomas = []
         for dip in output_diplomas:
-            diplom = Diploma.objects.values('name','number', 'series',
-                                             'date_registration',
-                                             'registration_number',
-                                             'name_institution',
-                                             'year_of_start_edu',
-                                             'year_of_finish_edu',
-                                             'spiciality', 'spicialization',
-                                             'description').filter(
-                                                 pk=dip.pk).first()
-            object_diplom = get_object_or_404(Diploma, pk=dip.pk)
-            output_diplomas.append(
-                get_data_with_verbose_name(object_diplom, diplom))
+            output_diplomas.append(show_diploma(dip.pk))
         return output_diplomas
-
 
 
 @check_authorization
 def education(request: HttpResponse, user_id: int) -> HttpResponse:
-    diplomas = show_diplomas(user_id)
+    diplomas = Diploma.objects.filter(user_id=user_id).all()
     if diplomas:
         context = {'diplomas': diplomas,
-                               'title': 'Данные об образовании',
-                               'user_id': user_id,
-                               'menu': menu}
-        return render(request, 'eduction_app/show_diplomas.html', context=context)
-    return redirect('edit_diploma', user_id=user_id)
-
-
-@check_authorization
-def edit_diploma(request: HttpResponse, user_id: int) -> Callable:
-    if not check_doc(user_id, Diploma):
-        logger.debug(f"Нет данных об образовании пользователя {user_id} - \
+                   'title': 'Данные об образовании',
+                   'user_id': user_id,
+                   'user': Data.objects.filter(user_id=user_id).first(),
+                   'menu': menu}
+        return render(request, 'education_app/show_diplomas.html', context=context)
+    logger.debug(f"Нет данных об образовании пользователя {user_id} - \
 переход к заполнению данных")
-        messages.error(request,
-        'Нет сведений об образовании пользователя. Введите необходимые данные')
-        return add_diploma(request, user_id)
-    return show_diplomas_for_change(request, user_id)
+    messages.error(request,
+        'Нет сведений об образовании. Добавьте документ')
+    return redirect('add_diploma', user_id=user_id)
 
 
 @check_authorization
@@ -63,8 +58,25 @@ def show_diplomas_for_change(request: HttpResponse, user_id: int) -> HttpRespons
     diplomas = Diploma.objects.filter(user_id=user_id).all()
     context = {'diplomas': diplomas,
                'user_id': user_id,
+               'title': 'Документы об образовании',
+               'user_name': Data.objects.filter(user_id=user_id).first(),
                'menu': menu}
     return render(request, 'education_app/show_diplomas.html', context=context)
+
+
+@check_authorization
+def get_diploma(request: HttpResponse,
+                user_id: int, diploma_id: int) -> HttpResponse:
+    diploma_dict = show_diploma(diploma_id)
+    if diploma_dict:
+        context = {'diploma_dict': diploma_dict,
+                   'title': f'Данные об образовании',
+                   'user_id': user_id,
+                   'menu': menu,
+                   'diploma': Diploma.objects.filter(pk=diploma_id).first()}
+        return render(request, 'education_app/get_diploma.html', context=context)
+    messages.error(request, "Необходимо заполнить данные")
+    return redirect('change_diploma', user_id=user_id, diploma_id=diploma_id)
 
 
 @check_authorization

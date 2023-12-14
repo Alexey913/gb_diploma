@@ -14,16 +14,16 @@ class DiplomaForm(forms.ModelForm):
     
     def clean_year_of_start_edu(self):
         year_of_start_edu = self.cleaned_data['year_of_start_edu']
-        if year_of_start_edu and len(str(
-            year_of_start_edu)) != 4 or year_of_start_edu > date.today().year:
+        if year_of_start_edu and (len(str(
+            year_of_start_edu)) != 4 or year_of_start_edu > date.today().year):
             raise ValidationError('Введите корректное значение года')
         return year_of_start_edu
     
     def clean_year_of_finish_edu(self):
         year_of_start_edu = self.cleaned_data['year_of_start_edu']
         year_of_finish_edu = self.cleaned_data['year_of_finish_edu']
-        if year_of_finish_edu and len(str(
-            year_of_finish_edu)) != 4 or year_of_finish_edu > date.today().year:
+        if year_of_finish_edu and (len(str(
+            year_of_finish_edu)) != 4 or year_of_finish_edu > date.today().year):
             raise ValidationError('Введите корректное значение года')
         if year_of_start_edu and year_of_finish_edu and year_of_finish_edu < year_of_start_edu: 
             raise ValidationError('Год окончания не может быть меньше года начала')

@@ -32,12 +32,16 @@ def load_form_people(entity: People, data_by_form: type):
     entity.gender = data_by_form['gender'] or entity.gender
     entity.save()
 
+def get_user_by_id(user_id:int) -> Data:
+    return Data.objects.filter(user_id=user_id).first()
+
 
 @check_authorization
 def docs(request: HttpResponse, user_id: int) -> HttpResponse:
     context = {'title': 'Документы',
                'user_id': user_id,
                'documents': documents,
+               'user': get_user_by_id(user_id),
                'menu': menu}
     return render(request, 'doc_app/docs.html', context=context)
 
@@ -96,6 +100,7 @@ def get_passport(request: HttpResponse, user_id: int) -> HttpResponse:
                            'childrens': childrens,
                            'title': 'Данные пользователя',
                            'user_id': user_id,
+                           'user': get_user_by_id(user_id),
                            'menu': menu}
     return render(request, 'doc_app/passport.html', context=context_to_template)
 
@@ -114,8 +119,7 @@ def change_passport(request: HttpResponse, user_id: int) -> HttpResponse:
                         setattr(current_passport, field, value)
                 if current_passport.adress_reg_eq_place:
                     current_passport.adress_registration = \
-                        Data.objects.filter(
-                            user_id=user_id).first().place_residense
+                        get_user_by_id(user_id).place_residense
                 else:
                     current_passport.adress_registration = \
                         data_by_form['adress_registration'] \
@@ -136,6 +140,7 @@ def change_passport(request: HttpResponse, user_id: int) -> HttpResponse:
     context = {'form': form,
                'title': 'Изменение паспортных данных',
                'user_id': user_id,
+               'user': get_user_by_id(user_id),
                'menu': menu}
     return render(request, 'doc_app/change_passport.html', context=context)
 
@@ -167,6 +172,7 @@ def add_people(request: HttpResponse, user_id: int, kind: str,
     context = {'form': form,
                'title': 'Данные о супруге',
                'user_id': user_id,
+               'user': get_user_by_id(user_id),
                'menu': menu}
     return render(request, f'doc_app/{kind}.html', context)
 
@@ -183,10 +189,10 @@ def add_children(request: HttpResponse, user_id: int) -> Callable:
 
 @check_authorization
 def change_spouce(request: HttpResponse, user_id: int) -> HttpResponse:
+    current_spouce = Spouce.objects.get(passport_id=user_id)
     if request.method == 'POST':
         form = SpouceForm(request.POST)
         if form.is_valid():
-            current_spouce = Spouce.objects.get(passport_id=user_id)
             data_by_form = form.cleaned_data
             load_form_people(current_spouce, data_by_form)
             current_spouce.date_marriage = data_by_form['date_marriage']\
@@ -203,6 +209,8 @@ def change_spouce(request: HttpResponse, user_id: int) -> HttpResponse:
     context = {'form': form,
                'title': 'Данные о супруге',
                'user_id': user_id,
+               'user': get_user_by_id(user_id),
+               'spouce': current_spouce,
                'menu': menu}
     return render(request, 'doc_app/edit_spouce.html', context)
 
@@ -226,6 +234,7 @@ def change_children(request: HttpResponse, user_id: int, children_id: int) -> Ht
     context = {'form': form,
                'title': 'Данные о детях',
                'user_id': user_id,
+               'user': get_user_by_id(user_id),
                'children': current_children,
                'menu': menu}
     return render(request, 'doc_app/edit_children.html', context)
@@ -245,6 +254,7 @@ def show_childrens_for_change(request: HttpResponse, user_id: int) -> HttpRespon
     childrens = Passport.objects.filter(pk=user_id).first().children_set.all()
     context = {'childrens': childrens,
                'user_id': user_id,
+               'user': get_user_by_id(user_id),
                'menu': menu}
     return render(request, 'doc_app/show_children.html', context=context)
 
@@ -295,6 +305,7 @@ def get_snils(request: HttpResponse, user_id: int) -> HttpResponse:
     context_to_template = {'context': context,
                            'title': 'CНИЛС',
                            'user_id': user_id,
+                           'user': get_user_by_id(user_id),
                            'view': 'change_snils',
                            'menu': menu}
     return render(request, 'doc_app/base_doc.html', context=context_to_template)
@@ -311,6 +322,7 @@ def get_inn(request: HttpResponse, user_id: int) -> HttpResponse:
                            'title': 'ИНН',
                            'user_id': user_id,
                            'view': 'change_inn',
+                           'user': get_user_by_id(user_id),   
                            'menu': menu}
     return render(request, 'doc_app/base_doc.html', context=context_to_template)
 
@@ -326,6 +338,7 @@ def get_foreign_passport(request: HttpResponse, user_id: int) -> HttpResponse:
                            'title': 'Заграничный паспорт',
                            'view': 'change_foreign_passport',
                            'user_id': user_id,
+                           'user': get_user_by_id(user_id),
                            'menu': menu}
     return render(request, 'doc_app/base_doc.html', context=context_to_template)
 
@@ -340,7 +353,8 @@ def get_military_ticket(request: HttpResponse, user_id: int) -> HttpResponse:
     context_to_template = {'context': context,
                            'title': 'Военыый билет',
                            'view': 'change_military_ticket',
-                           'user_id': user_id,
+                           'user_id': user_id,   
+                           'user': get_user_by_id(user_id),
                            'menu': menu}
     return render(request, 'doc_app/base_doc.html', context=context_to_template)
 
@@ -376,6 +390,7 @@ def change_doc(request: HttpResponse, user_id: int, type_form: forms.ModelForm,
                'title': f'Изменение документа {title}',
                'view': 'change_'+kind,
                'user_id': user_id,
+      'user': get_user_by_id(user_id),
                'menu': menu}
     return render(request, 'doc_app/base_change_doc.html', context=context)
 
@@ -424,6 +439,7 @@ def add_driver_category(request: HttpResponse, user_id: int) -> HttpResponse:
         form = DriverCategoryAddForm()
     context = {'form': form,
                'title': 'Данные о категории',
+               'user': get_user_by_id(user_id),
                'user_id': user_id,
                'menu': menu}
     return render(request, 'doc_app/new_driver_category.html', context)
@@ -477,7 +493,7 @@ def change_driver_category(request: HttpResponse, user_id: int, category_id: int
         form = DriverCategoryEditForm()
     context = {'form': form,
                'title':
-               f'Данные о категории {DriverCategory.objects.filter(pk=category_id).first().name}',
+               f'Категория {DriverCategory.objects.filter(pk=category_id).first().name}',
                'user_id': user_id,
                'shedule_cat': current_shedule_cat,
                'menu': menu}
@@ -528,6 +544,7 @@ def get_driver_license(request: HttpResponse, user_id: int) -> HttpResponse:
                            'title': 'Водительское удостоверение',
                            'view': 'change_driver_license',
                            'user_id': user_id,
+                           'user': get_user_by_id(user_id),
                            'menu': menu}
     return render(request, 'doc_app/driver_license.html', context=context_to_template)
 
@@ -563,6 +580,7 @@ def change_driver_license(request: HttpResponse, user_id: int) -> HttpResponse:
     context = {'form': form,
                'title': 'Изменение данных о водительском удостоверении',
                'view': 'change_driver_license',
+               'user': get_user_by_id(user_id),
                'user_id': user_id,
                'menu': menu}
     return render(request, 'doc_app/change_driver_license.html', context=context)

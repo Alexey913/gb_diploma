@@ -45,3 +45,6 @@ class Diploma(DiplomaTemplate):
 
     class Meta:
         db_table = 'education_app_diploma'
+
+    def __str__(self):
+        return f'{self.name} № {self.series} {self.number}'

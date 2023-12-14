@@ -1,30 +1,31 @@
 {% extends 'base.html' %}
+
+{% block mini_title %}
+    <h1>{{ title }} пользователя {{ user }}</h1>
+{% endblock %}
+
 {% block content %}
 
 
-    <div><h1>Документы пользователя</h1></div>
-    <br>
-    <div>
-        <table cellpadding="3">
-                
-            <tr>
-                <td align="left" width="200">
+<table>
+    <tr><td>
+    <table align="left" cellpadding="3">
                     {% for item in documents %}
-                        {% if not forloop.last %}
-                            <li><a href="{% url item.url_name user_id %}">{{ item.title }}</a></li>
-                        {% else %}
-                            <li class="last"><a href="{% url item.url_name user_id %}">{{ item.title }}</a></li>
-                        {% endif %}
-                    {% endfor %}
+                    <tr>
+                        <td>    
+                    <a href="{% url item.url_name user_id %}"><font size="5"><b>{{ item.title }}</b></font></a>
+                    <br><br>
                 </td>
             </tr>
-        
-
+            {% endfor %}
         </table>
-        <br>
-        <h2>Заполнить данные из документов</h2>
-        <h2>Заполнить данные через Госуслуги</h2>
-
-</div>
+    </td></tr>
+    <tr><td>
+    <div>
+        <h3>Заполнить данные из документов</h3>
+        <h3>Заполнить данные через Госуслуги</h3>
+    </div>
+    </td></tr>
+</table>
 
 {% endblock %}

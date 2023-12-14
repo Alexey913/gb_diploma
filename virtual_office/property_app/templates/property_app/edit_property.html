@@ -17,13 +17,6 @@
                         <label for="{{ f.id_for_label }}">{{f.label}}: </label>
                     </td>
                     <td> {{ f }} </td>
-                    <td>
-                        {% for k, v in remind.items %}
-                            {% if k == f.label %}
-                                {{ v }}
-                            {% endif %}
-                        {% endfor %}
-                    </td>
                 </tr>
                 <tr>
                     <td colspan="2" align="right">
@@ -34,9 +27,9 @@
         </table>
         <br>
         <input class="c-button" type="submit" value="Изменить данные">
-        <br><br>
-        <font size="4"><b><a href="{% url del_property user_id property_id %}"> Удалить сведения об объекте собственности </a></b></font>
     </form>
+        <br><br>
+        <font size="4"><b><a href="{% url del_property user_id property_id %}"> Удалить объект собственности</a></b></font>
 </div>
 
 {% endblock %}

@@ -1,55 +1,58 @@
 {% extends 'doc_app/base_doc.html' %}
-{% block content %}
 
+{% block information %}
 
-    <div><h1>Паспорт</h1></div>
+<div>
+    <h2>Данные о документе</h2>
+    <table cellpadding="3">
+        {% for k, v in context.items %}
+            <tr>
+                <td>
+                    <font size="4"><b>{{ k }}:</b></font>
+                </td>
+                <td>
+                    <font size="4">{{ v }}</font>
+                </td>
+            </tr>
+        {% endfor %}
+            <br>
+    </table>            
+    {% if spouce %}
     <br>
-    <div>
-        <table cellpadding="3">
-                
-                    <tr>
-                        <td align="left" width="200">
-                        {% if context %}
-                        <h3>Паспортные данные</h3>
-                            {% for k, v in context.items %}
-                                {{ k }}: {{ v }}
-                                <br>
-                            {% endfor %}
-                            {% if spouce %}
-                                <br>
-                                <h3>Сведения о супруге</h3>
-                                {% for k, v in spouce.items %}
-                                    {{ k }}: {{ v }}
-                                    <br>
-                                {% endfor %}
-                            {% endif %}
-                            {% if childrens %}
-                                <br>
-                                <h3>Сведения о детях</h3>
-                                {% for child in childrens %}
-                                    <h4> Ребенок {{ forloop.counter }} </h4>
-                                    {% for k, v in child.items %}
-                                    {{ k }}: {{ v }}
-                                    <br>
-                                    {% endfor %}
-                                {% endfor %}
-                            {% endif %}
-                        {% else %}
-                            <h2>Информация о паспорте отутствует.</h2>
-                            <h3>Желаете добавить?</h3>
-                        {% endif %}
-
-
-                        </td>
-                    </tr>
-        
-
-        </table>
+    <h3>Сведения о супруге</h3>
+    <table cellpadding="3">
+        {% for k, v in spouce.items %}
+        <tr>
+            <td>
+                <font size="4"><b>{{ k }}:</b></font>
+            </td>
+            <td>
+                <font size="4">{{ v }}</font>
+            </td>
+        </tr>
+        {% endfor %}
+    {% endif %}
+    {% if childrens %}
         <br>
-        <h2><a href="{% url 'change_passport' user_id %}"> Изменить паспортные данные </a></h2>
-        <h2>Заполнить данные из документов</h2>
-        <h2>Заполнить данные через Госуслуги</h2>
-
+        <h3>Сведения о детях</h3>
+        {% for child in childrens %}
+        <tr><td colspan="2">   
+            <h4> Ребенок {{ forloop.counter }} </h4>
+        </td></tr>
+            {% for k, v in child.items %}
+            <tr>
+                <td>
+                    <font size="4"><b>{{ k }}:</b></font>
+                </td>
+                <td>
+                    <font size="4">{{ v }}</font>
+                </td>
+            </tr>
+            <br>
+            {% endfor %}
+        {% endfor %}
+    {% endif %}
+</table>
 </div>
 
 {% endblock %}

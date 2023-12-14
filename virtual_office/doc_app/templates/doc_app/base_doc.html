@@ -1,34 +1,58 @@
 {% extends 'base.html' %}
+
+{% block mini_title %}
+    <h1> Пользователь {{ user }}</h1>
+{% endblock %}
+
 {% block content %}
+    <table align="left" cellpadding="3">
+        <tr><td>
+        <h2>
+            {{ title }} {{ user }}
+        </h2>
+            <br>
+    </td>
+    </tr>
+    <tr>
+        <td>
+            <h3><a href="{% url 'change_passport' user_id %}"> Изменить паспортные данные </a></h3>
+            <h3>Заполнить данные из документов</h3>
+            <h3>Заполнить данные через Госуслуги</h3>
+        </td>
+    </tr>
+    </table>
+    
+{% endblock %}
 
-
-    <div><h1>{{ title }}</h1></div>
-    <br>
+{% block information %}
     <div>
+        <h3>Данные о документе</h3>
         <table cellpadding="3">
-                
-                    <tr>
-                        <td align="left" width="200">
-                        {% if context %}
-                        <h3>Данные о документе</h3>
-                            {% for k, v in context.items %}
-                                {{ k }}: {{ v }}
-                                <br>
-                            {% endfor %}
-                        {% else %}
-                            <h2>Информация о документе {{ title }} отутствует.</h2>
-                            <h3>Желаете добавить?</h3>
-                        {% endif %}
-                        </td>
-                    </tr>
-        
-
+            {% for k, v in context.items %}
+            <tr>
+                <td>
+                    <font size="4"><b>{{ k }}:</b></font>
+                </td>
+                <td>
+                    <font size="4">{{ v }}</font>
+                </td>
+            </tr>
+        {% endfor %}
+        <tr>
+            <td colspan="2">
+                <font size="4"><b>
+                    <br><br>
+                    <h2><a href="{% url view user_id %}"> Изменить {{ title }} </a></h2>
+                </b></font>
+            </td>
+        </tr>
+        <tr><td>
+            <div>
+                <h3>Заполнить данные из документов</h3>
+                <h3>Заполнить данные через Госуслуги</h3>
+            </div>
+            </td></tr>
         </table>
-        <br>
-        <h2><a href="{% url view user_id %}"> Изменить данные </a></h2>
-        <h2>Заполнить данные из документов</h2>
-        <h2>Заполнить данные через Госуслуги</h2>
-
 </div>
 
 {% endblock %}

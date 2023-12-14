@@ -2,10 +2,8 @@ from django.urls import path
 from . import views
 urlpatterns = [
                path('<int:user_id>/', views.get_properties, name='properties'),
-               path('realty/<int:user_id>/', views.show_list_realty, name='realty'),
-               path('transport/<int:user_id>/', views.show_list_transport, name='transport'),
-               path('list_realty/<int:user_id>/', views.show_list_realty, name='show_realty'),
-               path('list_transport/<int:user_id>/', views.show_list_transport, name='show_transport'),
+               path('list_realty/<int:user_id>/', views.show_list_realty, name='realty'),
+               path('list_transport/<int:user_id>/', views.show_list_transport, name='transport'),
                path('add_realty/<int:user_id>/', views.add_realty, name='add_realty'),
                path('add_transport/<int:user_id>/', views.add_transport, name='add_transport'),
                path('get_realty/<int:user_id>/<int:property_id>/', views.get_realty, name='get_realty'),

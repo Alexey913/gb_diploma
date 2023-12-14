@@ -1,7 +1,11 @@
 {% extends 'doc_app/base_change_doc.html' %}
+
+{% block mini_title %}
+    <h1>{{ title }} пользователя {{ user }}</h1>
+{% endblock %}
+
 {% block content %}
 
-    <div><h1>Водительское удостоверение</h1></div>
     <div><h2>Изменение данных</h2></div>
     <div>
     <form action="{% url 'change_driver_license' user_id %}" method="post">
@@ -24,8 +28,10 @@
         <br>
         <input class="c-button" type="submit" value="Изменить данные">
     </form>
-    <br>
+    <br><br>
+    <font size="4"><b>
     <a href="{% url 'edit_driver_categories' user_id %}"> Изменить сведения о категориях </a>
+    </b></font>
 </div>
 
 {% endblock %}

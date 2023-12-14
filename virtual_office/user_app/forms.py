@@ -91,21 +91,21 @@ class ChangeDataForm(forms.ModelForm):
     def clean_name(self):
         super().clean()
         name = self.cleaned_data['name']
-        if re.search(r'[^а-яА-Яa-zA-Z]', name):
-            raise ValidationError('Введите корректное имя')    
+        if name and re.search(r'[^а-яА-Яa-zA-Z]', name):
+                raise ValidationError('Введите корректное имя')    
         return name
     
     def clean_surname(self):
         super().clean()
         surname = self.cleaned_data['surname']
-        if re.search(r'[^а-яА-Яa-zA-Z]', surname):
+        if surname and re.search(r'[^а-яА-Яa-zA-Z]', surname):
             raise ValidationError('Введите корректную фамилию')    
         return surname
     
     def clean_patronymic(self):
         super().clean()
         patronymic = self.cleaned_data['patronymic']
-        if re.search(r'[^а-яА-Яa-zA-Z]', patronymic):
+        if patronymic and re.search(r'[^а-яА-Яa-zA-Z]', patronymic):
             raise ValidationError('Введите корректное отчество')    
         return patronymic
     

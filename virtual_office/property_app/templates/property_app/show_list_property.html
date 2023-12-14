@@ -1,46 +1,45 @@
 {% extends 'base.html' %}
 
 {% block mini_title %}
-    <h1>{{ title }} пользователя {{ user_name }}</h1>
+    <h1>{{ title }} пользователя {{ user }}</h1>
 {% endblock %}
 
 {% block content %}
 
 
-    <div><h2>{{ title }}</h2></div>
-    <br>
-    <table>
-        <tr><td>
-        <table align="left" cellpadding="3">
-            {% for pr in properties %}
-                <tr>
-                    <td>
-                            <font size="5"><b>
-                                {{ pr.type_property }}:
-                            </b></font>
-                    </td>
-                    <td>
-                        <a href="{% url get_property user_id pr.pk %}">
-                        <font size="5">
-                            {% if pr.area %} 
-                                &nbsp;площадь {{ pr.area }} кв.м. ({{ pr.cadastral_number }})
-                            {% else %}
-                                {{ pr.brand }}&nbsp;{{ pr.model }}&nbsp;{{ pr.registration_number }}
-                            {% endif %}
-                        </b></font>
-                    </a>
-                    </td>
-                </tr>
-            {% endfor %}
-        </table>
-    </td></tr>
+<br>
+<table>
+    <tr><td>
+    <table align="left" cellpadding="3">
+        {% for pr in properties %}
             <tr>
                 <td>
-                    <a href="{% url add_property user_id %}"> <h3>Добавить {{ title }}</h3> </a>
+                    <font size="5"><b>
+                        {{ pr.type_property }}:
+                    </b></font>
+                </td>
+                <td>
+                    <a href="{% url get_property user.pk pr.pk %}">
+                    <font size="5">
+                        {% if pr.area %} 
+                            &nbsp;площадь {{ pr.area }} кв.м. ({{ pr.cadastral_number }})
+                        {% else %}
+                            {{ pr.brand }}&nbsp;{{ pr.model }}&nbsp;{{ pr.registration_number }}
+                        {% endif %}
+                    </b></font>
+                </a>
                 </td>
             </tr>
-        </table>
-        <br>
+        {% endfor %}
+    </table>
+</td></tr>
+        <tr>
+            <td>
+                <a href="{% url add_property user.pk %}"> <h3>Добавить {{ title }}</h3> </a>
+            </td>
+        </tr>
+    </table>
+    <br>
 </div>
 
 {% endblock %}

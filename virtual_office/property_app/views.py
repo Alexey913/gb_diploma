@@ -30,12 +30,12 @@ def show_list_property(request: HttpResponse, user_id: int, kind: str,
     properties = entity.objects.filter(user_id=user_id).all()
     if properties:
         context = {'title': title,
-                'user_id': user_id,
-                'properties': properties,
-                'menu': menu,
-                'user_name': Data.objects.filter(user_id=user_id).first(),
-                'add_property': 'add_'+kind,
-                'get_property': 'get_'+kind}
+                   'user_id': user_id,
+                   'properties': properties,
+                   'menu': menu,
+                   'user': Data.objects.filter(user_id=user_id).first(),
+                   'add_property': 'add_'+kind,
+                   'get_property': 'get_'+kind}
         return render(request, 'property_app/show_list_property.html', context=context)
     logger.debug(f"Нет данных по разделу {title} пользователя {user_id} - \
 # переход к добавлению объекта в {title}")
@@ -68,7 +68,7 @@ def add_property(request: HttpResponse, user_id: int,
             prop.save()
             messages.success(request, f"Успешное создание {in_title}")
             logger.info(f"Сохранение {in_title} пользователя {user_id}")
-            return redirect('show_'+kind, user_id=user_id)
+            return redirect(kind, user_id=user_id)
         logger.debug(
             f"Ошибка сохранения {in_title} пользователя {user_id}")
         messages.error(request, "Неверные данные")
@@ -195,7 +195,7 @@ def del_property(request: HttpResponse, user_id: int, property_id: int,
 пользователя {user_id}")
         messages.error(request, "Данных не сущствует")
     finally:
-        return redirect('show_'+kind, user_id=user_id)
+        return redirect(kind, user_id=user_id)
 
 @check_authorization
 def del_realty(request: HttpResponse, user_id: int,
